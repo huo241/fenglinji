@@ -1,0 +1,572 @@
+---
+/**
+ * 写作台 /admin —— v2「编辑器优先」
+ * 打开即写；左上角图标拉出侧边抽屉：文章列表 / 数据图表 / 连接设置。
+ * 静态页面 + GitHub API 直写仓库，无需任何后端。
+ */
+import 'easymde/dist/easymde.min.css';
+import '../styles/admin.css';
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>写作台 · 风林集</title>
+    <script is:inline>
+      (function () {
+        var t = localStorage.getItem('theme');
+        if (!t) t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        document.documentElement.dataset.theme = t;
+      })();
+    </script>
+  </head>
+  <body class="admin-body">
+    <!-- 顶栏 -->
+    <header class="topbar">
+      <button id="btn-drawer" class="icon-btn" type="button" title="菜单" aria-label="打开抽屉菜单">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+      </button>
+      <a href="/" class="brand-mini" title="回到博客">
+        <svg viewBox="0 0 32 32" width="22" height="22" fill="none" aria-hidden="true">
+          <rect width="32" height="32" rx="8" fill="url(#alg2)"></rect>
+          <path d="M7 12h13a3 3 0 1 0-3-3" stroke="#fff" stroke-width="2.2" stroke-linecap="round" fill="none"></path>
+          <path d="M7 18h16a3 3 0 1 1-3 3" stroke="#fff" stroke-width="2.2" stroke-linecap="round" fill="none"></path>
+          <path d="M7 24h8" stroke="#fff" stroke-width="2.2" stroke-linecap="round"></path>
+          <defs><linearGradient id="alg2" x1="0" y1="0" x2="32" y2="32"><stop stop-color="#4b63e6"></stop><stop offset="1" stop-color="#7a4a9e"></stop></linearGradient></defs>
+        </svg>
+      </a>
+      <span id="save-state" class="save-state"></span>
+      <div class="top-actions">
+        <button id="btn-meta" class="btn ghost" type="button">文章信息 ▾</button>
+        <button id="btn-toggle-theme" class="btn ghost" type="button" title="切换主题">◐</button>
+        <button id="btn-publish" class="btn primary" type="button" disabled>发 布</button>
+      </div>
+    </header>
+
+    <!-- 文章信息浮层 -->
+    <div id="meta-pop" class="meta-pop hidden">
+      <label>文件名（slug）<input id="f-slug" type="text" placeholder="英文短横线，如 my-post" /></label>
+      <label>摘要<textarea id="f-desc" rows="2" placeholder="显示在列表页的一句话"></textarea></label>
+      <label>标签（逗号分隔）<input id="f-tags" type="text" placeholder="生活, 随感" /></label>
+      <div class="meta-inline">
+        <label>日期<input id="f-date" type="date" /></label>
+        <label class="checkbox"><input id="f-pinned" type="checkbox" /> 置顶 TOP</label>
+      </div>
+    </div>
+
+    <!-- 未连接弹窗 -->
+    <div id="setup-mask" class="modal-mask hidden">
+      <div id="setup-card" class="setup-card">
+        <h2>先连接你的 GitHub</h2>
+        <p>发布功能需要一个 <b>GitHub 个人访问令牌（Fine-grained PAT）</b>，只授权给博客仓库：</p>
+        <ol>
+          <li>打开 <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a></li>
+          <li>Repository access 选 <b>Only select repositories</b> → 选 <code>fenglinji</code></li>
+          <li>Permissions → Repository permissions → <b>Contents: Read and write</b></li>
+          <li>Generate token，复制以 <code>github_pat_</code> 开头的一长串</li>
+        </ol>
+        <div class="setup-row">
+          <input id="input-token" type="password" placeholder="粘贴 github_pat_ 令牌" autocomplete="off" />
+          <button id="btn-save-settings" class="btn primary" type="button">连接</button>
+        </div>
+        <button id="btn-clip" class="btn ghost block" type="button">📋 从剪贴板粘贴并连接</button>
+        <p class="setup-note">令牌只存在你自己浏览器的 localStorage 里，不会发往 GitHub 以外的任何地方。</p>
+      </div>
+    </div>
+
+    <!-- 侧拉抽屉 -->
+    <div id="drawer-overlay" class="drawer-overlay hidden"></div>
+    <aside id="drawer" class="drawer" aria-hidden="true">
+      <div class="drawer-head">
+        <span class="drawer-title">风林集 · 工作台</span>
+        <button id="btn-drawer-close" class="icon-btn" type="button" title="收起">✕</button>
+      </div>
+
+      <button id="btn-new" class="btn primary block" type="button">＋ 写新文章</button>
+
+      <!-- 数据面板 -->
+      <section class="stats-grid" id="stats-grid">
+        <div class="stat-card"><b id="st-posts">–</b><span>文章</span></div>
+        <div class="stat-card"><b id="st-words">–</b><span>总字数</span></div>
+        <div class="stat-card"><b id="st-month">–</b><span>本月新增</span></div>
+        <div class="stat-card"><b id="st-streak">–</b><span>最长连更周</span></div>
+      </section>
+
+      <section class="chart-sec">
+        <h3>板块分布</h3>
+        <div id="chart-cat" class="chart-cat"></div>
+      </section>
+
+      <section class="chart-sec">
+        <h3>写作日历 · 近 12 周</h3>
+        <div id="chart-heat" class="chart-heat"></div>
+      </section>
+
+      <section class="chart-sec">
+        <h3>全部文章 <span id="post-count" class="dim"></span></h3>
+        <ul id="post-list" class="post-list"></ul>
+      </section>
+
+      <section class="conn-sec">
+        <h3>连接设置</h3>
+        <input id="drawer-token" type="password" placeholder="github_pat_ 令牌" autocomplete="off" />
+        <input id="drawer-repo" type="text" placeholder="仓库" value="huo241/fenglinji" />
+        <button id="btn-reconnect" class="btn ghost block" type="button">保存并重连</button>
+      </section>
+    </aside>
+
+    <!-- 编辑器主界面 -->
+    <main id="editor-wrap" class="editor-wrap hidden">
+      <div class="title-row">
+        <input id="f-title" type="text" placeholder="在此输入标题……" autocomplete="off" />
+      </div>
+      <div class="meta-bar">
+        <select id="f-category" title="板块">
+          <option value="随笔">随笔</option>
+          <option value="讲义">讲义</option>
+        </select>
+        <span id="word-count" class="dim word-count"></span>
+        <span class="spacer"></span>
+        <span id="editing-flag" class="dim"></span>
+      </div>
+      <div class="editor-panel">
+        <textarea id="editor"></textarea>
+      </div>
+    </main>
+
+    <div id="toast" class="toast hidden"></div>
+
+    <script>
+      import EasyMDE from 'easymde';
+
+      // ---------- 基础状态 ----------
+      const GH = 'https://api.github.com';
+      const $ = (id: string) => document.getElementById(id)!;
+      const OWNER_REPO_KEY = 'flj_repo';
+      const TOKEN_KEY = 'flj_gh_token';
+
+      let token = localStorage.getItem(TOKEN_KEY) || '';
+      let repo = localStorage.getItem(OWNER_REPO_KEY) || 'huo241/fenglinji';
+      let editingFile: { name: string; sha: string } | null = null;
+      let mde: any = null;
+      let postsCache: { name: string; meta: any; words: number }[] = [];
+
+      const b64of = (s: string) => btoa(unescape(encodeURIComponent(s)));
+      const unb64 = (s: string) => decodeURIComponent(escape(atob(s.replace(/\n/g, ''))));
+
+      // 任何未捕获错误都弹提示，杜绝"点了没反应"的静默崩溃
+      window.addEventListener('error', (e) => {
+        try { toast('出错了：' + e.message, false); } catch {}
+      });
+
+      function toast(msg: string, ok = true) {
+        const t = $('toast');
+        t.textContent = msg;
+        t.className = 'toast' + (ok ? '' : ' err');
+        clearTimeout((t as any)._h);
+        (t as any)._h = setTimeout(() => t.classList.add('hidden'), 2600);
+      }
+
+      async function gh(method: string, path: string, body?: any) {
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 20000);
+        let res: Response;
+        try {
+          res = await fetch(`${GH}/repos/${repo}/contents/${path}`, {
+            method,
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: 'application/vnd.github+json',
+              'Content-Type': 'application/json',
+            },
+            body: body ? JSON.stringify(body) : undefined,
+            signal: ctrl.signal,
+          });
+        } catch (e: any) {
+          if (e.name === 'AbortError') throw new Error('请求超时（20 秒）——到 GitHub 的网络不稳定，稍后再试');
+          throw new Error('网络请求失败：' + e.message);
+        } finally {
+          clearTimeout(timer);
+        }
+        if (!res.ok) throw new Error(`GitHub ${res.status}: ${(await res.json()).message || ''}`);
+        return res.json();
+      }
+
+      // ---------- 主题 ----------
+      $('btn-toggle-theme').addEventListener('click', () => {
+        const cur = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.dataset.theme = cur;
+        localStorage.setItem('theme', cur);
+      });
+
+      // ---------- 抽屉 ----------
+      function setDrawer(open: boolean) {
+        if (open) {
+          ($('drawer-token') as HTMLInputElement).value = token;
+          ($('drawer-repo') as HTMLInputElement).value = repo;
+        }
+        document.body.classList.toggle('drawer-open', open);
+        $('drawer-overlay').classList.toggle('hidden', !open);
+        $('drawer').setAttribute('aria-hidden', String(!open));
+      }
+      $('btn-drawer').addEventListener('click', () => setDrawer(true));
+      $('btn-drawer-close').addEventListener('click', () => setDrawer(false));
+      $('drawer-overlay').addEventListener('click', () => setDrawer(false));
+
+      // ---------- 文章信息浮层 ----------
+      $('btn-meta').addEventListener('click', (e) => {
+        e.stopPropagation();
+        $('meta-pop').classList.toggle('hidden');
+      });
+      document.addEventListener('click', (e) => {
+        const pop = $('meta-pop');
+        if (!pop.classList.contains('hidden') && !pop.contains(e.target as Node)) {
+          if (e.target !== $('btn-meta')) pop.classList.add('hidden');
+        }
+      });
+
+      // ---------- 连接 / 设置 ----------
+      function openSetup() {
+        $('setup-mask').classList.remove('hidden');
+        ($('input-token') as HTMLInputElement).value = token;
+      }
+
+      // tOverride / rOverride：抽屉等处的显式传入；否则读弹窗输入框
+      async function tryConnect(tOverride?: string, rOverride?: string) {
+        const t = (tOverride ?? ($('input-token') as HTMLInputElement | null)?.value ?? '').trim();
+        const r = (rOverride ?? '').trim();
+        if (!t) return toast('令牌输入框是空的——请把 github_pat_ 令牌粘贴进去', false);
+        token = t;
+        if (r) repo = r;
+        // 按钮进入加载态，避免看起来"点了没反应"
+        const btns = [$('btn-save-settings'), $('btn-reconnect')] as HTMLButtonElement[];
+        const old = btns.map((b) => b.textContent);
+        btns.forEach((b) => { b.disabled = true; b.textContent = '连接中…'; });
+        try {
+          await gh('GET', 'src/content/blog');
+          localStorage.setItem(TOKEN_KEY, token);
+          localStorage.setItem(OWNER_REPO_KEY, repo);
+          $('setup-mask').classList.add('hidden');
+          $('editor-wrap').classList.remove('hidden');
+          ($('btn-publish') as HTMLButtonElement).disabled = false;
+          toast('已连接 ' + repo);
+          await refreshList();
+        } catch (e: any) {
+          toast('连接失败：' + e.message, false);
+        } finally {
+          btns.forEach((b, i) => { b.disabled = false; b.textContent = old[i]; });
+        }
+      }
+      $('btn-save-settings').addEventListener('click', tryConnect);
+      $('btn-clip').addEventListener('click', async () => {
+        try {
+          const txt = (await navigator.clipboard.readText()).trim();
+          if (!txt) return toast('剪贴板是空的——先去 GitHub 复制令牌', false);
+          ($('input-token') as HTMLInputElement).value = txt;
+          await tryConnect();
+        } catch (e: any) {
+          toast('浏览器不让读剪贴板，请手动粘贴进输入框', false);
+        }
+      });
+      $('btn-reconnect').addEventListener('click', () => {
+        // 抽屉里的值显式传入连接函数（弹窗里已无仓库输入框，不能回写）
+        const dt = ($('drawer-token') as HTMLInputElement).value.trim();
+        const dr = ($('drawer-repo') as HTMLInputElement).value.trim() || 'huo241/fenglinji';
+        tryConnect(dt, dr).then(() => setDrawer(false));
+      });
+
+      // ---------- 编辑器 ----------
+      mde = new EasyMDE({
+        element: $('editor') as HTMLTextAreaElement,
+        spellChecker: false,
+        autosave: { enabled: true, uniqueId: 'flj-draft', delay: 800, timeFormat: { format: 'HH:mm', locale: 'zh-CN' } } as any,
+        sideBySideFullscreen: false,
+        renderingConfig: { singleLineBreaks: false },
+        placeholder: '从这里开始写……支持全部 Markdown 语法',
+        toolbar: [
+          'bold', 'italic', 'strikethrough', 'heading', '|',
+          'quote', 'unordered-list', 'ordered-list', 'table', '|',
+          'code', 'link', 'image', '|',
+          'preview', 'side-by-side', 'fullscreen', '|',
+          'guide',
+        ],
+        imageUploadFunction(file: File, onSuccess: (url: string) => void, onError: (msg: string) => void) {
+          if (!token) return onError('先连接 GitHub');
+          const ext = file.name.split('.').pop();
+          const path = `public/images/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+          const reader = new FileReader();
+          reader.onload = async () => {
+            try {
+              await gh('PUT', path, {
+                message: `上传图片 ${file.name}`,
+                content: (reader.result as string).split(',')[1],
+              });
+              onSuccess(`/${path.replace('public/', '')}`);
+              toast('图片已上传');
+            } catch (e: any) {
+              onError('上传失败：' + e.message);
+            }
+          };
+          reader.readAsDataURL(file);
+        },
+      });
+      mde.codemirror.on('change', updateWordCount);
+
+      function updateWordCount() {
+        const n = mde.value().replace(/\s/g, '').length;
+        $('word-count').textContent = n ? `${n} 字` : '';
+      }
+
+      // 自动填 slug
+      $('f-title').addEventListener('input', () => {
+        if (($('f-slug') as HTMLInputElement).dataset.touched) return;
+        ($('f-slug') as HTMLInputElement).value = `post-${new Date().toISOString().slice(0, 10)}`;
+      });
+      $('f-slug').addEventListener('input', (e) => ((e.target as HTMLInputElement).dataset.touched = '1'));
+
+      // ---------- frontmatter ----------
+      function yamlStr(v: string) {
+        return /[:"'#\[\]{}|>&*!%@\`]/.test(v) ? JSON.stringify(v) : v;
+      }
+
+      function buildMarkdown() {
+        const title = ($('f-title') as HTMLInputElement).value.trim() || '无题';
+        const tags = ($('f-tags') as HTMLInputElement).value.split(/[,，]/).map((s) => s.trim()).filter(Boolean);
+        const desc = ($('f-desc') as HTMLTextAreaElement).value.trim();
+        const lines = [
+          '---',
+          `title: ${yamlStr(title)}`,
+          desc ? `description: ${yamlStr(desc)}` : null,
+          `date: ${($('f-date') as HTMLInputElement).value || new Date().toISOString().slice(0, 10)}`,
+          `category: ${($('f-category') as HTMLSelectElement).value}`,
+          `tags: [${tags.join(', ')}]`,
+          `pinned: ${($('f-pinned') as HTMLInputElement).checked}`,
+          '---',
+          '',
+          mde.value(),
+        ].filter((x) => x !== null);
+        return lines.join('\n') + '\n';
+      }
+
+      function parseFrontmatter(raw: string) {
+        const m = raw.match(/^---\n([\s\S]*?)\n---\n?/);
+        const meta: any = {};
+        if (m) {
+          for (const line of m[1].split('\n')) {
+            const kv = line.match(/^(\w+):\s*(.*)$/);
+            if (!kv) continue;
+            let [, k, v] = kv;
+            v = v.trim();
+            if (v.startsWith('[') && v.endsWith(']')) meta[k] = v.slice(1, -1).split(',').map((s: string) => s.trim().replace(/^["']|["']$/g, '')).filter(Boolean);
+            else meta[k] = v.replace(/^["']|["']$/g, '');
+          }
+          return { meta, body: raw.slice(m[0].length) };
+        }
+        return { meta: {}, body: raw };
+      }
+
+      // ---------- 数据统计 ----------
+      function renderStats() {
+        const total = postsCache.length;
+        const words = postsCache.reduce((a, p) => a + p.words, 0);
+        const ym = new Date().toISOString().slice(0, 7);
+        const month = postsCache.filter((p) => (p.meta.date || '').startsWith(ym)).length;
+
+        // 最长连更周：按 date 分桶到周
+        const weeks = new Set<number>();
+        for (const p of postsCache) {
+          if (!p.meta.date) continue;
+          const d = new Date(p.meta.date + 'T00:00:00');
+          if (isNaN(d.getTime())) continue;
+          weeks.add(Math.floor(d.getTime() / (7 * 864e5)));
+        }
+        let streak = 0, best = 0, prev = -10;
+        for (const w of Array.from(weeks).sort((a, b) => a - b)) {
+          streak = w === prev + 1 ? streak + 1 : 1;
+          best = Math.max(best, streak);
+          prev = w;
+        }
+
+        ($('st-posts') as HTMLElement).textContent = String(total);
+        ($('st-words') as HTMLElement).textContent = words >= 10000 ? (words / 10000).toFixed(1) + 'w' : String(words);
+        ($('st-month') as HTMLElement).textContent = String(month);
+        ($('st-streak') as HTMLElement).textContent = best ? best + ' 周' : '–';
+
+        // 板块分布（水平条）
+        const byCat: Record<string, number> = {};
+        for (const p of postsCache) {
+          const c = p.meta.category || '未分类';
+          byCat[c] = (byCat[c] || 0) + 1;
+        }
+        const max = Math.max(1, ...Object.values(byCat));
+        const palette: Record<string, string> = { 随笔: '#5b6ee8', 讲义: '#9a5be0', 未分类: '#9aa0b5' };
+        $('chart-cat').innerHTML = Object.entries(byCat)
+          .map(([c, n]) => `
+            <div class="cat-row">
+              <span class="cat-name">${c}</span>
+              <div class="cat-track"><div class="cat-fill" style="width:${(n / max) * 100}%;background:${palette[c] || '#5b6ee8'}"></div></div>
+              <span class="cat-n">${n}</span>
+            </div>`)
+          .join('');
+
+        // 写作日历热力图：近 12 周
+        const byDay = new Map<string, number>();
+        for (const p of postsCache) if (p.meta.date) byDay.set(p.meta.date, (byDay.get(p.meta.date) || 0) + 1);
+        const today = new Date();
+        const cells: string[] = [];
+        for (let w = 11; w >= 0; w--) {
+          for (let d = 0; d < 7; d++) {
+            const day = new Date(today);
+            day.setDate(today.getDate() - (w * 7 + (6 - d)));
+            const key = day.toISOString().slice(0, 10);
+            const n = byDay.get(key) || 0;
+            const lvl = n === 0 ? 0 : n === 1 ? 1 : n <= 3 ? 2 : 3;
+            cells.push(`<i class="hv lv${lvl}" data-d="${key}" data-n="${n}"></i>`);
+          }
+        }
+        $('chart-heat').innerHTML = `<div class="heat-grid">${cells.join('')}</div><div class="heat-legend">少 <i class="hv lv0"></i><i class="hv lv1"></i><i class="hv lv2"></i><i class="hv lv3"></i> 多</div>`;
+      }
+
+      // ---------- 文章列表 ----------
+      async function refreshList() {
+        const list = $('post-list');
+        list.innerHTML = '<li class="loading">加载中…</li>';
+        try {
+          const files: any[] = await gh('GET', 'src/content/blog');
+          const mds = files.filter((f) => f.name.endsWith('.md'));
+          $('post-count').textContent = `(${mds.length})`;
+          postsCache = [];
+          list.innerHTML = '';
+          for (const f of mds) {
+            const raw = unb64(f.content);
+            const { meta, body } = parseFrontmatter(raw);
+            postsCache.push({ name: f.name, meta, words: body.replace(/\s/g, '').length });
+            const li = document.createElement('li');
+            li.className = 'post-item';
+            li.innerHTML = `
+              <div class="pi-main">
+                <span class="pi-title">${meta.title || f.name}${meta.pinned === 'true' ? ' <b class="pi-top">TOP</b>' : ''}</span>
+                <span class="pi-meta">${meta.date || ''} · ${meta.category || ''} · ${body.replace(/\s/g, '').length} 字</span>
+              </div>
+              <div class="pi-ops">
+                <button class="op edit" title="编辑">改</button>
+                <button class="op del" title="删除">删</button>
+              </div>`;
+            li.querySelector('.edit')!.addEventListener('click', () => {
+              loadForEdit(f.name, f.sha, raw);
+              setDrawer(false);
+            });
+            li.querySelector('.del')!.addEventListener('click', () => deletePost(f.name, f.sha, meta.title || f.name));
+            list.appendChild(li);
+          }
+          postsCache.sort((a, b) => (b.meta.date || '').localeCompare(a.meta.date || ''));
+          renderStats();
+        } catch (e: any) {
+          list.innerHTML = `<li class="loading">加载失败：${e.message}</li>`;
+        }
+      }
+
+      function loadForEdit(name: string, sha: string, raw: string) {
+        const { meta, body } = parseFrontmatter(raw);
+        editingFile = { name, sha };
+        ($('f-title') as HTMLInputElement).value = meta.title || '';
+        ($('f-slug') as HTMLInputElement).value = name.replace(/\.md$/, '');
+        ($('f-slug') as HTMLInputElement).dataset.touched = '1';
+        ($('f-category') as HTMLSelectElement).value = meta.category || '随笔';
+        ($('f-desc') as HTMLTextAreaElement).value = meta.description || '';
+        ($('f-tags') as HTMLInputElement).value = Array.isArray(meta.tags) ? meta.tags.join(', ') : meta.tags || '';
+        ($('f-date') as HTMLInputElement).value = meta.date || new Date().toISOString().slice(0, 10);
+        ($('f-pinned') as HTMLInputElement).checked = meta.pinned === 'true';
+        mde.value(body);
+        ($('btn-publish') as HTMLButtonElement).textContent = '保存修改';
+        $('editing-flag').textContent = `正在编辑：${meta.title || name}`;
+        updateWordCount();
+        toast('已载入「' + (meta.title || name) + '」');
+      }
+
+      async function deletePost(name: string, sha: string, title: string) {
+        if (!confirm(`确定删除《${title}》？此操作会从仓库移除该文章。`)) return;
+        try {
+          await gh('DELETE', `src/content/blog/${name}`, { message: `删除文章：${title}`, sha });
+          toast('已删除');
+          await refreshList();
+          if (editingFile?.name === name) newPost();
+        } catch (e: any) {
+          toast('删除失败：' + e.message, false);
+        }
+      }
+
+      function newPost() {
+        editingFile = null;
+        ($('f-title') as HTMLInputElement).value = '';
+        ($('f-slug') as HTMLInputElement).value = '';
+        delete ($('f-slug') as HTMLInputElement).dataset.touched;
+        ($('f-desc') as HTMLTextAreaElement).value = '';
+        ($('f-tags') as HTMLInputElement).value = '';
+        ($('f-pinned') as HTMLInputElement).checked = false;
+        ($('f-date') as HTMLInputElement).value = new Date().toISOString().slice(0, 10);
+        mde.value('');
+        ($('btn-publish') as HTMLButtonElement).textContent = '发 布';
+        $('editing-flag').textContent = '';
+        updateWordCount();
+        ($('f-title') as HTMLInputElement).focus();
+      }
+      $('btn-new').addEventListener('click', () => {
+        newPost();
+        setDrawer(false);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      // ---------- 发布 ----------
+      $('btn-publish').addEventListener('click', async () => {
+        const slug = (($('f-slug') as HTMLInputElement).value.trim() || `post-${Date.now()}`).replace(/[^\w\u4e00-\u9fa5-]/g, '-');
+        const filename = `${slug}.md`;
+        const title = ($('f-title') as HTMLInputElement).value.trim() || '无题';
+        const btn = $('btn-publish') as HTMLButtonElement;
+        btn.disabled = true;
+        btn.textContent = '发布中…';
+        try {
+          const body: any = {
+            message: (editingFile ? `修改文章：` : `发布文章：`) + title,
+            content: b64of(buildMarkdown()),
+          };
+          if (editingFile) body.sha = editingFile.sha;
+          await gh('PUT', `src/content/blog/${filename}`, body);
+          toast(editingFile ? '修改已保存，构建大约 1 分钟' : '已发布！构建大约 1 分钟后生效');
+          editingFile = { name: filename, sha: (await gh('GET', `src/content/blog/${filename}`)).sha };
+          $('editing-flag').textContent = `正在编辑：${title}`;
+          await refreshList();
+        } catch (e: any) {
+          toast('发布失败：' + e.message, false);
+        } finally {
+          btn.disabled = false;
+          btn.textContent = editingFile ? '保存修改' : '发 布';
+        }
+      });
+
+      // ---------- 快捷键 ----------
+      document.addEventListener('keydown', (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+          e.preventDefault();
+          if (!($('btn-publish') as HTMLButtonElement).disabled) ($('btn-publish') as HTMLButtonElement).click();
+        }
+        if (e.key === 'Escape') {
+          setDrawer(false);
+          $('meta-pop').classList.add('hidden');
+        }
+      });
+
+      // ---------- 启动 ----------
+      ($('f-date') as HTMLInputElement).value = new Date().toISOString().slice(0, 10);
+      if (token) {
+        tryConnect();
+      } else {
+        openSetup();
+      }
+    </script>
+  </body>
+</html>

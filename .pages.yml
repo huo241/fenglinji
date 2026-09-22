@@ -1,0 +1,58 @@
+# Pages CMS 后台配置 —— https://pagescms.org
+# 打开 pagescms.org → 用 GitHub 登录 huo241 → 选这个仓库，就能在网页上改以下内容。
+
+media:
+  input: public/images
+  output: /images
+
+content:
+  # 站点设置：对应 src/data/site.json，表单化修改站名/motto/简介/社交链接
+  - name: site
+    label: 站点设置
+    type: file
+    path: src/data/site.json
+    fields:
+      - { name: name, label: 站名, type: string }
+      - { name: motto, label: 座右铭, type: string }
+      - { name: footer, label: 页脚, type: string }
+      - { name: avatarText, label: 头像占位字, type: string }
+      - { name: avatarUrl, label: 头像图片地址, type: string }
+      - { name: ownerName, label: 显示名, type: string }
+      - { name: bio, label: 侧栏简介, type: text }
+      - name: socials
+        label: 社交链接
+        type: object
+        fields:
+          - name: github
+            label: GitHub
+            type: object
+            fields:
+              - { name: url, label: 链接, type: string }
+              - { name: label, label: 名称, type: string }
+          - name: email
+            label: 邮箱
+            type: object
+            fields:
+              - { name: url, label: 链接, type: string }
+              - { name: label, label: 名称, type: string }
+
+  # 文章集合：src/content/blog 下的 markdown
+  - name: posts
+    label: 文章
+    type: collection
+    path: src/content/blog
+    extension: md
+    view:
+      fields: [title, date, category, pinned]
+      primary: title
+      sort: { field: date, direction: desc }
+    fields:
+      - { name: title, label: 标题, type: string }
+      - { name: description, label: 摘要, type: text }
+      - { name: date, label: 日期, type: date }
+      - name: category
+        label: 板块
+        type: select
+        options: [随笔, 讲义]
+      - { name: pinned, label: 置顶, type: boolean, default: false }
+      - { name: body, label: 正文, type: rich-text }

@@ -1,0 +1,26 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import PostCard from '../components/PostCard.astro';
+import Sidebar from '../components/Sidebar.astro';
+
+const posts = (await getCollection('blog')).sort(
+  (a, b) => Number(b.data.pinned) - Number(a.data.pinned) || b.data.date.valueOf() - a.data.date.valueOf()
+);
+---
+
+<BaseLayout>
+  <Hero />
+
+  <main class="container home-main">
+    <section>
+      <div class="section-head reveal">
+        <h2>最近文章</h2>
+        <span>RECENT POSTS</span>
+      </div>
+      {posts.map((post, i) => <PostCard post={post} index={i} />)}
+    </section>
+    <Sidebar />
+  </main>
+</BaseLayout>

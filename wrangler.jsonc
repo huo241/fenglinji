@@ -1,0 +1,14 @@
+// Cloudflare Workers 静态站点配置（Git 集成自动部署用）
+// 构建流程：npm run build → astro build 产出 dist/ → npx wrangler deploy 上传 dist/
+{
+  "name": "fenglinji",
+  "compatibility_date": "2026-09-22",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  },
+  "routes": [
+    { "pattern": "snappy.blog", "custom_domain": true },
+    { "pattern": "www.snappy.blog", "custom_domain": true }
+  ]
+}
