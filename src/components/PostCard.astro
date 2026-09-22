@@ -1,0 +1,33 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  index?: number;
+}
+
+const { post, index = 0 } = Astro.props;
+const { title, description, date, category, tags, pinned } = post.data;
+
+const fmt = (d: Date) =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+---
+
+<a href={`/posts/${post.id}/`} class="post-card reveal" style={`--reveal-delay:${(index % 5) * 0.08}s`}>
+  {pinned && (
+    <span class="pin-ribbon"><span>置顶</span></span>
+  )}
+  <h3 transition:name={`post-title-${post.id}`}>{title}</h3>
+  {description && <p style="margin:0 0 12px;font-size:14px;color:var(--muted);">{description}</p>}
+  <div class="post-meta">
+    <span class="item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+      {fmt(date)}
+    </span>
+    <span class="item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V6a2 2 0 0 1 2-2h9l5 5v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M14 4v5h5"/></svg>
+      {category}
+    </span>
+    {tags.map((t) => <span class="tag">{t}</span>)}
+  </div>
+</a>

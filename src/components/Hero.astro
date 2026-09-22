@@ -1,0 +1,150 @@
+---
+// 首页横幅：原创 SVG 山景，三层视差 + 星星闪烁 + 云雾漂移
+import { SITE, SECTIONS } from '../config';
+---
+
+<div class="hero" id="hero">
+  <div class="hero-art" aria-hidden="true">
+    <svg viewBox="0 0 1440 640" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#101733" />
+          <stop offset="0.45" stop-color="#2a2a52" />
+          <stop offset="0.75" stop-color="#5b3d63" />
+          <stop offset="1" stop-color="#8a5468" />
+        </linearGradient>
+        <radialGradient id="moonGlow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stop-color="#f6ecd8" stop-opacity="0.9" />
+          <stop offset="0.35" stop-color="#f6ecd8" stop-opacity="0.25" />
+          <stop offset="1" stop-color="#f6ecd8" stop-opacity="0" />
+        </radialGradient>
+        <linearGradient id="haze" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#c99aa0" stop-opacity="0" />
+          <stop offset="1" stop-color="#c99aa0" stop-opacity="0.35" />
+        </linearGradient>
+      </defs>
+
+      <rect width="1440" height="640" fill="url(#sky)" />
+
+      <!-- 星星 -->
+      <g class="layer" data-depth="0.08" fill="#fff">
+        <circle cx="120" cy="90" r="1.6" class="tw" style="--d:0s" />
+        <circle cx="260" cy="150" r="1.1" class="tw" style="--d:.7s" />
+        <circle cx="380" cy="60" r="1.4" class="tw" style="--d:1.4s" />
+        <circle cx="520" cy="120" r="1" class="tw" style="--d:.3s" />
+        <circle cx="660" cy="45" r="1.5" class="tw" style="--d:1.9s" />
+        <circle cx="820" cy="95" r="1.2" class="tw" style="--d:1s" />
+        <circle cx="960" cy="55" r="1.7" class="tw" style="--d:.5s" />
+        <circle cx="1120" cy="130" r="1.1" class="tw" style="--d:2.2s" />
+        <circle cx="1260" cy="70" r="1.4" class="tw" style="--d:1.6s" />
+        <circle cx="1360" cy="150" r="1.2" class="tw" style="--d:.9s" />
+        <circle cx="180" cy="210" r="0.9" class="tw" style="--d:2.6s" />
+        <circle cx="1050" cy="180" r="0.9" class="tw" style="--d:1.2s" />
+      </g>
+
+      <!-- 月亮 -->
+      <g class="layer" data-depth="0.15">
+        <circle cx="1160" cy="140" r="110" fill="url(#moonGlow)" />
+        <circle cx="1160" cy="140" r="42" fill="#f2e7cf" />
+        <circle cx="1146" cy="128" r="9" fill="#e2d4b8" opacity="0.7" />
+        <circle cx="1174" cy="152" r="6" fill="#e2d4b8" opacity="0.6" />
+      </g>
+
+      <!-- 云雾 -->
+      <g class="clouds" opacity="0.5">
+        <ellipse cx="300" cy="240" rx="260" ry="26" fill="#c99aa0" opacity="0.14" class="drift" style="--t:46s" />
+        <ellipse cx="900" cy="200" rx="320" ry="22" fill="#c99aa0" opacity="0.12" class="drift" style="--t:62s" />
+        <ellipse cx="1240" cy="280" rx="240" ry="20" fill="#c99aa0" opacity="0.1" class="drift" style="--t:54s" />
+      </g>
+
+      <!-- 远山 -->
+      <g class="layer" data-depth="0.25">
+        <path d="M0 360 L140 300 L260 345 L420 265 L560 340 L700 290 L860 350 L1000 300 L1160 355 L1300 310 L1440 355 L1440 640 L0 640 Z"
+          fill="#4a3d68" opacity="0.85" />
+      </g>
+
+      <!-- 中山 -->
+      <g class="layer" data-depth="0.45">
+        <path d="M0 430 L120 380 L300 445 L480 350 L640 430 L820 365 L980 445 L1150 380 L1320 450 L1440 405 L1440 640 L0 640 Z"
+          fill="#332a4e" />
+        <path d="M480 350 L540 385 L510 390 L560 415 L480 430 Z" fill="#e8d9c8" opacity="0.12" />
+      </g>
+
+      <!-- 近山 + 飞鸟 -->
+      <g class="layer" data-depth="0.7">
+        <path d="M0 540 L180 470 L340 530 L520 455 L700 535 L900 480 L1080 550 L1260 495 L1440 545 L1440 640 L0 640 Z"
+          fill="#1f1a33" />
+        <g stroke="#0f0c1d" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.9">
+          <path d="M340 350 q10 -9 20 0 q10 -9 20 0" />
+          <path d="M410 315 q8 -7 16 0 q8 -7 16 0" />
+          <path d="M285 300 q7 -6 14 0 q7 -6 14 0" />
+        </g>
+      </g>
+
+      <!-- 底部渐隐入背景 -->
+      <rect y="560" width="1440" height="80" fill="url(#haze)" opacity="0.25" />
+    </svg>
+  </div>
+
+  <div class="hero-content">
+    <h1 class="hero-title" transition:name="site-title">{SITE.name}</h1>
+    <p class="hero-motto">{SITE.motto}</p>
+  </div>
+
+  <div class="hero-sections">
+    {SECTIONS.map((s) => (
+      <a href={`/${s.key}/`} class="hero-section">
+        <h3>{s.label}</h3>
+        <p>{s.tagline}</p>
+        <span class="dash"></span>
+      </a>
+    ))}
+  </div>
+
+  <div class="scroll-hint" aria-hidden="true"></div>
+</div>
+
+<style>
+  .tw {
+    animation: twinkle 3.2s ease-in-out infinite;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.15; }
+  }
+  .drift {
+    animation: drift var(--t, 50s) linear infinite alternate;
+  }
+  @keyframes drift {
+    from { transform: translateX(-40px); }
+    to { transform: translateX(60px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tw, .drift { animation: none; }
+  }
+</style>
+
+<script>
+  // 鼠标视差：各层按 depth 轻微位移，转场后重新绑定
+  function initParallax() {
+    const hero = document.getElementById('hero');
+    if (!hero || hero.dataset.parallaxBound) return;
+    hero.dataset.parallaxBound = '1';
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const layers = hero.querySelectorAll<SVGGraphicsElement>('.layer');
+    hero.addEventListener('mousemove', (e) => {
+      const r = hero.getBoundingClientRect();
+      const dx = (e.clientX - r.width / 2) / r.width;
+      const dy = (e.clientY - r.height / 2) / r.height;
+      layers.forEach((l) => {
+        const d = parseFloat(l.dataset.depth || '0');
+        l.style.transform = `translate(${-dx * d * 34}px, ${-dy * d * 18}px)`;
+      });
+    });
+    hero.addEventListener('mouseleave', () => {
+      layers.forEach((l) => (l.style.transform = 'translate(0,0)'));
+    });
+  }
+  document.addEventListener('astro:page-load', initParallax);
+</script>
