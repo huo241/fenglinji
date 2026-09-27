@@ -12,10 +12,15 @@
       "label": "GitHub"
     },
     "email": {
-      "url": "hi@snappy.blog",
+      "url": "mailto:hi@snappy.blog",
       "label": "邮箱"
     },
-    "custom": []
+    "custom": [
+      {
+        "label": "ech0",
+        "url": "https://ech0.snappy.blog/"
+      }
+    ]
   },
   "sections": [
     {
