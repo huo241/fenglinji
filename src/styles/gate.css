@@ -1,0 +1,83 @@
+/* ---------- 站长页通行码门帘（admin / settings 共用） ---------- */
+.gate-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eef1f5;
+}
+:root[data-theme='dark'] .gate-overlay { background: #0e1014; }
+.gate-card {
+  width: min(320px, 86vw);
+  background: #fff;
+  border: 1px solid #e4e6eb;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(24, 32, 64, 0.12);
+  padding: 32px 28px;
+  text-align: center;
+}
+:root[data-theme='dark'] .gate-card { background: #171b22; border-color: #252b36; }
+.gate-card .lock {
+  width: 44px;
+  height: 44px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(75, 99, 230, 0.12);
+  color: #4b63e6;
+}
+.gate-card .lock svg { width: 20px; height: 20px; }
+.gate-card h2 {
+  font-family: 'PingFang SC', 'Songti SC', serif;
+  font-size: 18px;
+  letter-spacing: 3px;
+  margin: 0 0 6px;
+  color: #21242b;
+}
+:root[data-theme='dark'] .gate-card h2 { color: #e7e9ee; }
+.gate-card p {
+  font-size: 13px;
+  color: #71757e;
+  margin: 0 0 18px;
+}
+.gate-card input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  font-size: 15px;
+  text-align: center;
+  letter-spacing: 4px;
+  color: #21242b;
+  background: #f5f6f8;
+  border: 1px solid #e4e6eb;
+  border-radius: 10px;
+  outline: none;
+}
+:root[data-theme='dark'] .gate-card input { color: #e7e9ee; background: #14171d; border-color: #252b36; }
+.gate-card input:focus { border-color: #4b63e6; }
+.gate-card button {
+  margin-top: 12px;
+  width: 100%;
+  padding: 10px 0;
+  font-size: 14.5px;
+  border: none;
+  border-radius: 10px;
+  background: #4b63e6;
+  color: #fff;
+  cursor: pointer;
+}
+.gate-card .gate-err {
+  font-size: 12.5px;
+  color: #f43f5e;
+  margin-top: 10px;
+  min-height: 18px;
+}
+.gate-overlay.shake .gate-card { animation: gate-shake 0.4s; }
+@keyframes gate-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
