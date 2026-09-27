@@ -5,8 +5,51 @@
  * 静态页面 + GitHub API 直写仓库，无需任何后端。
  */
 import 'easymde/dist/easymde.min.css';
+import '../styles/gate.css';
 import '../styles/admin.css';
 ---
+
+<!-- 站长通行码门帘：默认盖住整页，通过校验才揭开 -->
+<div id="gate" class="gate-overlay" style="display:none">
+  <div class="gate-card">
+    <div class="lock">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+    </div>
+    <h2>仅站长入口</h2>
+    <p>请输入通行码</p>
+    <input id="gate-pass" type="password" autocomplete="off" />
+    <button id="gate-btn" type="button">解 锁</button>
+    <div class="gate-err" id="gate-err"></div>
+  </div>
+</div>
+<script is:inline>
+  (function () {
+    var HASH = '8371a0e643887f66a5ff0a9272a3128a2080ccb3b8bbbfe296205ec351a017b8';
+    async function sha(s) {
+      var d = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+      return Array.from(new Uint8Array(d)).map(function (b) { return b.toString(16).padStart(2, '0'); }).join('');
+    }
+    if (localStorage.getItem('flj_gate') === HASH.slice(0, 16)) return;
+    var gate = document.getElementById('gate');
+    gate.style.display = 'flex';
+    var input = document.getElementById('gate-pass');
+    function tryUnlock() {
+      sha(input.value).then(function (h) {
+        if (h === HASH) {
+          localStorage.setItem('flj_gate', HASH.slice(0, 16));
+          gate.style.display = 'none';
+        } else {
+          document.getElementById('gate-err').textContent = '通行码不对';
+          gate.classList.add('shake');
+          setTimeout(function () { gate.classList.remove('shake'); }, 450);
+        }
+      });
+    }
+    document.getElementById('gate-btn').addEventListener('click', tryUnlock);
+    input.addEventListener('keydown', function (e) { if (e.key === 'Enter') tryUnlock(); });
+    setTimeout(function () { input.focus(); }, 50);
+  })();
+</script>
 
 <!doctype html>
 <html lang="zh-CN">
