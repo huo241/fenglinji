@@ -583,11 +583,23 @@ import '../styles/admin.css';
         btn.disabled = true;
         btn.textContent = '发布中…';
         try {
+          // 发布前先查目标文件：存在就必须带 sha（GitHub 硬性要求，否则 422 "sha wasn't supplied"）
+          // 顺便拿最新 sha，避免编辑期间文件在远端变过导致 sha 过期
+          let existing: any = null;
+          try {
+            existing = await gh('GET', `src/content/blog/${filename}`);
+          } catch (e: any) {
+            if (!String(e.message).includes('404')) throw e; // 404=新建，其他错误（网络/代理）如实抛出
+          }
+          if (existing && !editingFile) {
+            const ok = confirm(`仓库里已经有 ${filename} 了，继续发布会覆盖它。确定覆盖？`);
+            if (!ok) return;
+          }
           const body: any = {
-            message: (editingFile ? `修改文章：` : `发布文章：`) + title,
+            message: (existing ? `修改文章：` : `发布文章：`) + title,
             content: b64of(buildMarkdown()),
           };
-          if (editingFile) body.sha = editingFile.sha;
+          if (existing) body.sha = existing.sha;
           await gh('PUT', `src/content/blog/${filename}`, body);
           toast(editingFile ? '修改已保存，构建大约 1 分钟' : '已发布！构建大约 1 分钟后生效');
           editingFile = { name: filename, sha: (await gh('GET', `src/content/blog/${filename}`)).sha };
