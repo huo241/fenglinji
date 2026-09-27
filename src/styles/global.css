@@ -81,11 +81,11 @@
   --hero-pine: #2f2a20;
   --hero-bird: #3f392e;
   --hero-sun: #b04432;
-  /* 隔纸透字：天空半透，十六字水印与宣纸纹理从 hero 底下隐隐透上来 */
-  --hero-sky1-o: 0.8;
-  --hero-sky2-o: 0.76;
-  --hero-sky3-o: 0.72;
-  --hero-sky4-o: 0.85;
+  /* 隔纸透字：天空大副度半透，十六字水印从底下明显透出 */
+  --hero-sky1-o: 0.58;
+  --hero-sky2-o: 0.52;
+  --hero-sky3-o: 0.46;
+  --hero-sky4-o: 0.75;
 }
 
 /* 宣纸纹理：几团极淡的陈年纸渍，静态 */
@@ -452,21 +452,19 @@ img {
   height: 17px;
 }
 
-:root[data-theme='dark'] .icon-sun { display: none; }
-:root[data-theme='light'] .icon-moon { display: none; }
-:root[data-theme='paper'] .icon-moon,
-:root[data-theme='paper'] .icon-sun { display: none; }
-:root[data-theme='light'] .icon-paper,
 :root[data-theme='dark'] .icon-paper { display: none; }
+:root[data-theme='paper'] .icon-moon { display: none; }
 .glass-toggle .icon-glass { transition: transform 0.3s ease; }
 :root[data-glass='on'] .glass-toggle .icon-glass { transform: scale(1.12); }
 
 /* ---------- Hero 随主题换皮 ---------- */
-/* 纸墨档：宣纸上没有星空和月亮，换一轮朱砂日 */
+/* 纸墨档：宣纸上没有星空和月亮，换一轮朱砂日；山脚化墨融进宣纸 */
 :root[data-theme='paper'] .hero-moon,
 :root[data-theme='paper'] .hero-stars { display: none; }
-.hero-sun { display: none; }
-:root[data-theme='paper'] .hero-sun { display: block; }
+.hero-sun, .hero-fade { display: none; }
+:root[data-theme='paper'] .hero-sun,
+:root[data-theme='paper'] .hero-fade { display: block; }
+:root[data-theme='paper'] { --hero-fade: #f3edde; }
 
 /* 纸墨档 hero 文字：宣纸底上用墨色字 */
 :root[data-theme='paper'] .hero { color: var(--text); }
