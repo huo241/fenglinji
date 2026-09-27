@@ -95,8 +95,6 @@ img {
   --g-border: rgba(255, 255, 255, 0.78);
   --g-spec: rgba(255, 255, 255, 0.95);
   --g-sheen: linear-gradient(115deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.08) 26%, rgba(255, 255, 255, 0) 48%);
-  --sans: 'PingFang SC', 'PingFang TC', 'Helvetica Neue', sans-serif;
-  --serif: 'PingFang SC', 'PingFang TC', 'Helvetica Neue', sans-serif;
 }
 
 :root[data-glass='on'][data-theme='dark'] {
@@ -116,8 +114,6 @@ img {
   --g-border: rgba(255, 255, 255, 0.16);
   --g-spec: rgba(255, 255, 255, 0.28);
   --g-sheen: linear-gradient(115deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.03) 26%, rgba(255, 255, 255, 0) 48%);
-  --sans: 'PingFang SC', 'PingFang TC', 'Helvetica Neue', sans-serif;
-  --serif: 'PingFang SC', 'PingFang TC', 'Helvetica Neue', sans-serif;
 }
 
 /* --- 壁纸：玻璃下面得有颜色，光才有的折 --- */
@@ -221,17 +217,6 @@ img {
   background: var(--bg-soft);
   backdrop-filter: blur(16px) saturate(1.6);
   -webkit-backdrop-filter: blur(16px) saturate(1.6);
-}
-
-/* 苹方最粗到 Semibold，伪加粗会发糊，玻璃模式标题统一 600 */
-:root[data-glass='on'] .hero-title,
-:root[data-glass='on'] .brand,
-:root[data-glass='on'] .prose h1,
-:root[data-glass='on'] .prose h2,
-:root[data-glass='on'] .post-card h3,
-:root[data-glass='on'] .section-head h2,
-:root[data-glass='on'] .page-hero h1 {
-  font-weight: 600;
 }
 
 /* 管理入口（写作台/设置）：默认隐藏，仅本机浏览器存有令牌时由脚本点亮 */
