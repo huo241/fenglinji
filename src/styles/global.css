@@ -167,6 +167,9 @@ img {
   font-weight: 600;
 }
 
+/* 管理入口（写作台/设置）：默认隐藏，仅本机浏览器存有令牌时由脚本点亮 */
+.owner-only { display: none; }
+
 /* ---------- 滚动渐入动画 ---------- */
 .reveal {
   opacity: 0;

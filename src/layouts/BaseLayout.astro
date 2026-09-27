@@ -124,6 +124,16 @@ const isActive = (href: string) =>
         els.forEach((el) => io.observe(el));
       }
       document.addEventListener('astro:page-load', initReveal);
+
+      // ---- 管理入口图标：只有存有 GitHub 令牌的浏览器（也就是你自己）才显示 ----
+      function initOwnerLinks() {
+        const show = !!localStorage.getItem('flj_gh_token');
+        document.querySelectorAll('.owner-only').forEach((el) => {
+          (el as HTMLElement).style.display = show ? '' : 'none';
+        });
+      }
+      initOwnerLinks();
+      document.addEventListener('astro:after-swap', initOwnerLinks);
     </script>
   </body>
 </html>
