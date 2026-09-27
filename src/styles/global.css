@@ -39,6 +39,55 @@
   --shadow-hover: 0 14px 40px rgba(0, 0, 0, 0.5);
 }
 
+/* 纸墨主题：宣纸底 + 墨色字 + 兵法十六字行书水印（汉典式国学风） */
+:root[data-theme='paper'] {
+  color-scheme: light;
+  --bg: #f3edde;
+  --bg-soft: #ebe4d0;
+  --card: #faf6ea;
+  --text: #33302a;
+  --muted: #7d7668;
+  --border: #ddd2ba;
+  --accent: #a03d2d;
+  --accent-soft: rgba(160, 61, 45, 0.1);
+  --shadow: 0 6px 24px rgba(80, 66, 40, 0.1);
+  --shadow-hover: 0 14px 40px rgba(80, 66, 40, 0.16);
+}
+
+/* 宣纸纹理：几团极淡的陈年纸渍，静态 */
+:root[data-theme='paper'] body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(46% 38% at 14% 20%, rgba(190, 168, 120, 0.16), transparent 70%),
+    radial-gradient(40% 34% at 84% 66%, rgba(178, 156, 112, 0.13), transparent 72%),
+    radial-gradient(52% 44% at 52% 96%, rgba(196, 178, 136, 0.12), transparent 74%),
+    linear-gradient(175deg, #f5efe0 0%, #f1ead7 55%, #ede5cf 100%);
+}
+
+/* 兵法十六字行书水印：竖排四列，右起「其疾如风/其徐如林/侵掠如火/不动如山」 */
+.paper-cal {
+  position: fixed;
+  right: 4vw;
+  top: 50%;
+  transform: translateY(-50%);
+  height: min(88vh, 820px);
+  width: auto;
+  z-index: -1;
+  opacity: 0.13;
+  pointer-events: none;
+  display: none;
+}
+:root[data-theme='paper'] .paper-cal { display: block; }
+.paper-cal path { fill: #55492f; }
+@media (max-width: 900px) {
+  .paper-cal { height: 64vh; right: -4vw; opacity: 0.1; }
+}
+
+
 html {
   scroll-behavior: smooth;
 }
@@ -114,6 +163,26 @@ img {
   --g-border: rgba(255, 255, 255, 0.16);
   --g-spec: rgba(255, 255, 255, 0.28);
   --g-sheen: linear-gradient(115deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.03) 26%, rgba(255, 255, 255, 0) 48%);
+}
+
+/* 玻璃 × 纸墨：宣纸与书法水印当折射底，玻璃配方与浅色档一致 */
+:root[data-glass='on'][data-theme='paper'] {
+  color-scheme: light;
+  --bg: #f3edde;
+  --bg-soft: rgba(255, 255, 255, 0.4);
+  --card: rgba(255, 252, 244, 0.45);
+  --text: #33302a;
+  --muted: #6d6555;
+  --border: rgba(255, 255, 255, 0.6);
+  --accent: #a03d2d;
+  --accent-soft: rgba(160, 61, 45, 0.12);
+  --shadow: 0 16px 40px rgba(80, 66, 40, 0.16);
+  --shadow-hover: 0 24px 56px rgba(80, 66, 40, 0.22);
+  --radius: 22px;
+  --g-card: linear-gradient(160deg, rgba(255, 252, 244, 0.55), rgba(255, 250, 238, 0.28));
+  --g-border: rgba(255, 255, 255, 0.75);
+  --g-spec: rgba(255, 255, 255, 0.92);
+  --g-sheen: linear-gradient(115deg, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.07) 26%, rgba(255, 255, 255, 0) 48%);
 }
 
 /* --- 壁纸：玻璃下面得有颜色，光才有的折 --- */
@@ -351,6 +420,10 @@ img {
 
 :root[data-theme='dark'] .icon-sun { display: none; }
 :root[data-theme='light'] .icon-moon { display: none; }
+:root[data-theme='paper'] .icon-moon,
+:root[data-theme='paper'] .icon-sun { display: none; }
+:root[data-theme='light'] .icon-paper,
+:root[data-theme='dark'] .icon-paper { display: none; }
 .glass-toggle .icon-glass { transition: transform 0.3s ease; }
 :root[data-glass='on'] .glass-toggle .icon-glass { transform: scale(1.12); }
 
