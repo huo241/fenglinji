@@ -35,7 +35,7 @@ const isActive = (href: string) =>
       // 首屏防闪烁：渲染前先定主题与玻璃开关
       (function () {
         var t = localStorage.getItem('theme');
-        if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        if (t !== 'light' && t !== 'dark' && t !== 'paper') t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
         document.documentElement.dataset.theme = t;
         document.documentElement.dataset.glass = localStorage.getItem('glass') === 'on' ? 'on' : 'off';
       })();

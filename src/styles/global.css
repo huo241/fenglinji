@@ -6,6 +6,22 @@
     'Microsoft YaHei', 'Segoe UI', sans-serif;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --radius: 14px;
+  /* Hero 首页山水配色：浅·深档共用夜山，纸墨档在下方覆写为昼卷 */
+  --hero-sky1: #0a0d12;
+  --hero-sky2: #121924;
+  --hero-sky3: #1c2938;
+  --hero-sky4: #29394b;
+  --hero-far: #8ea4ba;
+  --hero-mid: #41546c;
+  --hero-near: #1a2534;
+  --hero-near2: #0d141f;
+  --hero-mist: #d8e2ec;
+  --hero-star: #dfe7f0;
+  --hero-moon: #ebe4d1;
+  --hero-moon-crater: #ddd3ba;
+  --hero-sun: #a03d2d;
+  --hero-pine: #0c1420;
+  --hero-bird: #cfd9e4;
 }
 
 /* 浅色主题（默认） */
@@ -52,6 +68,19 @@
   --accent-soft: rgba(160, 61, 45, 0.1);
   --shadow: 0 6px 24px rgba(80, 66, 40, 0.1);
   --shadow-hover: 0 14px 40px rgba(80, 66, 40, 0.16);
+  /* 纸墨档 hero：宣纸昼卷，无星月，一轮朱砂日 */
+  --hero-sky1: #f7f2e4;
+  --hero-sky2: #f2ead6;
+  --hero-sky3: #e9dfc6;
+  --hero-sky4: #dcd0ae;
+  --hero-far: #bab19c;
+  --hero-mid: #857c68;
+  --hero-near: #4a4335;
+  --hero-near2: #332d22;
+  --hero-mist: #fffdf4;
+  --hero-pine: #2f2a20;
+  --hero-bird: #3f392e;
+  --hero-sun: #b04432;
 }
 
 /* 宣纸纹理：几团极淡的陈年纸渍，静态 */
@@ -426,6 +455,24 @@ img {
 :root[data-theme='dark'] .icon-paper { display: none; }
 .glass-toggle .icon-glass { transition: transform 0.3s ease; }
 :root[data-glass='on'] .glass-toggle .icon-glass { transform: scale(1.12); }
+
+/* ---------- Hero 随主题换皮 ---------- */
+/* 纸墨档：宣纸上没有星空和月亮，换一轮朱砂日 */
+:root[data-theme='paper'] .hero-moon,
+:root[data-theme='paper'] .hero-stars { display: none; }
+.hero-sun { display: none; }
+:root[data-theme='paper'] .hero-sun { display: block; }
+
+/* 纸墨档 hero 文字：宣纸底上用墨色字 */
+:root[data-theme='paper'] .hero { color: var(--text); }
+:root[data-theme='paper'] .hero-title { text-shadow: 0 2px 24px rgba(243, 237, 222, 0.85); }
+:root[data-theme='paper'] .hero-motto { text-shadow: none; }
+:root[data-theme='paper'] .hero-section { color: var(--text); }
+:root[data-theme='paper'] .hero-section:hover { background: rgba(51, 48, 42, 0.06); }
+:root[data-theme='paper'] .hero-section .dash { background: rgba(51, 48, 42, 0.45); }
+:root[data-theme='paper'] .hero-section:hover .dash { background: var(--accent); }
+:root[data-theme='paper'] .scroll-hint { border-color: rgba(51, 48, 42, 0.4); }
+:root[data-theme='paper'] .scroll-hint::before { background: rgba(51, 48, 42, 0.6); }
 
 /* ---------- Hero ---------- */
 .hero {

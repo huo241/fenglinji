@@ -1,5 +1,7 @@
 ---
-// 首页横幅：原创水墨夜山 SVG，三层视差 + 星光闪烁 + 云气漂移
+// 首页横幅：原创水墨山水 SVG，一套骨架三张皮（夜山 / 夜山 / 纸墨昼卷）
+// 浅·深档 = 墨色夜山；纸墨档 = 宣纸淡墨手卷（无星月，一轮朱砂日）
+// 填色全部走 CSS 变量（--hero-*），见 global.css
 import { SITE, SECTIONS } from '../config';
 ---
 
@@ -7,31 +9,35 @@ import { SITE, SECTIONS } from '../config';
   <div class="hero-art" aria-hidden="true">
     <svg viewBox="0 0 1440 640" preserveAspectRatio="xMidYMid slice">
       <defs>
-        <!-- 夜空：墨色，近地平线微亮 -->
+        <!-- 天空：夜 = 墨色；纸墨 = 宣纸 -->
         <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#0a0d12" />
-          <stop offset="0.5" stop-color="#121924" />
-          <stop offset="0.8" stop-color="#1c2938" />
-          <stop offset="1" stop-color="#29394b" />
+          <stop offset="0" class="s-sky1" />
+          <stop offset="0.5" class="s-sky2" />
+          <stop offset="0.8" class="s-sky3" />
+          <stop offset="1" class="s-sky4" />
         </linearGradient>
-        <!-- 月晕 -->
+        <!-- 月晕 / 日晕 -->
         <radialGradient id="moonGlow" cx="0.5" cy="0.5" r="0.5">
           <stop offset="0" stop-color="#f0e9d6" stop-opacity="0.75" />
           <stop offset="0.35" stop-color="#f0e9d6" stop-opacity="0.2" />
           <stop offset="1" stop-color="#f0e9d6" stop-opacity="0" />
         </radialGradient>
+        <radialGradient id="sunGlow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stop-color="#a03d2d" stop-opacity="0.22" />
+          <stop offset="1" stop-color="#a03d2d" stop-opacity="0" />
+        </radialGradient>
         <!-- 山：淡墨渐入雾气 -->
         <linearGradient id="inkFar" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#8ea4ba" stop-opacity="0.6" />
-          <stop offset="1" stop-color="#8ea4ba" stop-opacity="0.06" />
+          <stop offset="0" class="s-far" stop-opacity="0.6" />
+          <stop offset="1" class="s-far" stop-opacity="0.06" />
         </linearGradient>
         <linearGradient id="inkMid" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#41546c" stop-opacity="0.95" />
-          <stop offset="1" stop-color="#41546c" stop-opacity="0.2" />
+          <stop offset="0" class="s-mid" stop-opacity="0.95" />
+          <stop offset="1" class="s-mid" stop-opacity="0.2" />
         </linearGradient>
         <linearGradient id="inkNear" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#1a2534" stop-opacity="1" />
-          <stop offset="1" stop-color="#0d141f" stop-opacity="1" />
+          <stop offset="0" class="s-near" stop-opacity="1" />
+          <stop offset="1" class="s-near2" stop-opacity="1" />
         </linearGradient>
         <!-- 水墨晕染：让山脊线不再是机械折线 -->
         <filter id="ink" x="-5%" y="-5%" width="110%" height="115%">
@@ -42,7 +48,7 @@ import { SITE, SECTIONS } from '../config';
           <feGaussianBlur stdDeviation="14" />
         </filter>
         <!-- 孤松 -->
-        <g id="pine" stroke="#0c1420" stroke-width="2.6" fill="none" stroke-linecap="round">
+        <g id="pine" class="pine" stroke-width="2.6" fill="none" stroke-linecap="round">
           <path d="M0 0 L0 -30" />
           <path d="M0 -9 L-11 -17 M0 -9 L11 -17" />
           <path d="M0 -18 L-9 -26 M0 -18 L9 -26" />
@@ -52,8 +58,8 @@ import { SITE, SECTIONS } from '../config';
 
       <rect width="1440" height="640" fill="url(#sky)" />
 
-      <!-- 星子，疏可走马 -->
-      <g class="layer" data-depth="0.08" fill="#dfe7f0">
+      <!-- 星子，疏可走马（纸墨档隐去：宣纸上没有星空） -->
+      <g class="layer hero-stars" data-depth="0.08" fill="var(--hero-star)">
         <circle cx="120" cy="88" r="1.3" class="tw" style="--d:0s" />
         <circle cx="262" cy="152" r="0.9" class="tw" style="--d:.7s" />
         <circle cx="384" cy="58" r="1.2" class="tw" style="--d:1.4s" />
@@ -68,21 +74,27 @@ import { SITE, SECTIONS } from '../config';
         <circle cx="1052" cy="176" r="0.7" class="tw" style="--d:1.2s" />
       </g>
 
-      <!-- 月 -->
-      <g class="layer" data-depth="0.15">
+      <!-- 月（夜档） -->
+      <g class="layer hero-moon" data-depth="0.15">
         <circle cx="1150" cy="132" r="125" fill="url(#moonGlow)" />
-        <circle cx="1150" cy="132" r="40" fill="#ebe4d1" />
-        <circle cx="1137" cy="121" r="8" fill="#ddd3ba" opacity="0.65" />
-        <circle cx="1163" cy="143" r="5.5" fill="#ddd3ba" opacity="0.55" />
+        <circle cx="1150" cy="132" r="40" fill="var(--hero-moon)" />
+        <circle cx="1137" cy="121" r="8" fill="var(--hero-moon-crater)" opacity="0.65" />
+        <circle cx="1163" cy="143" r="5.5" fill="var(--hero-moon-crater)" opacity="0.55" />
+      </g>
+
+      <!-- 朱砂日（纸墨档专属点睛） -->
+      <g class="layer hero-sun" data-depth="0.15">
+        <circle cx="1150" cy="132" r="110" fill="url(#sunGlow)" />
+        <circle cx="1150" cy="132" r="34" fill="var(--hero-sun)" />
       </g>
 
       <!-- 云气 -->
       <g class="clouds">
-        <ellipse cx="300" cy="238" rx="270" ry="24" fill="#d8e2ec" opacity="0.07" class="drift" style="--t:46s" filter="url(#mistBlur)" />
-        <ellipse cx="880" cy="196" rx="330" ry="20" fill="#d8e2ec" opacity="0.06" class="drift" style="--t:62s" filter="url(#mistBlur)" />
-        <ellipse cx="1230" cy="276" rx="250" ry="18" fill="#d8e2ec" opacity="0.05" class="drift" style="--t:54s" filter="url(#mistBlur)" />
+        <ellipse cx="300" cy="238" rx="270" ry="24" fill="var(--hero-mist)" opacity="0.07" class="drift" style="--t:46s" filter="url(#mistBlur)" />
+        <ellipse cx="880" cy="196" rx="330" ry="20" fill="var(--hero-mist)" opacity="0.06" class="drift" style="--t:62s" filter="url(#mistBlur)" />
+        <ellipse cx="1230" cy="276" rx="250" ry="18" fill="var(--hero-mist)" opacity="0.05" class="drift" style="--t:54s" filter="url(#mistBlur)" />
         <!-- 一缕薄云掠过月面 -->
-        <ellipse cx="1080" cy="150" rx="190" ry="12" fill="#d8e2ec" opacity="0.1" class="drift" style="--t:70s" filter="url(#mistBlur)" />
+        <ellipse cx="1080" cy="150" rx="190" ry="12" fill="var(--hero-mist)" opacity="0.1" class="drift" style="--t:70s" filter="url(#mistBlur)" />
       </g>
 
       <!-- 远山：淡墨 -->
@@ -94,7 +106,7 @@ import { SITE, SECTIONS } from '../config';
       </g>
 
       <!-- 山脚雾带 -->
-      <ellipse cx="720" cy="400" rx="760" ry="30" fill="#d8e2ec" opacity="0.08" filter="url(#mistBlur)" />
+      <ellipse cx="720" cy="400" rx="760" ry="30" fill="var(--hero-mist)" opacity="0.08" filter="url(#mistBlur)" />
 
       <!-- 中山：次浓墨，脊上孤松 -->
       <g class="layer" data-depth="0.45">
@@ -112,8 +124,8 @@ import { SITE, SECTIONS } from '../config';
       </g>
 
       <!-- 中山与近山之间的夜雾 -->
-      <ellipse cx="480" cy="470" rx="540" ry="26" fill="#d8e2ec" opacity="0.07" filter="url(#mistBlur)" />
-      <ellipse cx="1120" cy="490" rx="480" ry="24" fill="#d8e2ec" opacity="0.06" filter="url(#mistBlur)" />
+      <ellipse cx="480" cy="470" rx="540" ry="26" fill="var(--hero-mist)" opacity="0.07" filter="url(#mistBlur)" />
+      <ellipse cx="1120" cy="490" rx="480" ry="24" fill="var(--hero-mist)" opacity="0.06" filter="url(#mistBlur)" />
 
       <!-- 近山：浓墨 -->
       <g class="layer" data-depth="0.7">
@@ -121,8 +133,8 @@ import { SITE, SECTIONS } from '../config';
           <path d="M0 540 L182 468 L342 528 L522 452 L702 534 L902 478 L1082 548 L1262 494 L1440 544 L1440 640 L0 640 Z"
             fill="url(#inkNear)" />
         </g>
-        <!-- 留白飞鸟 -->
-        <g stroke="#cfd9e4" stroke-width="2.4" fill="none" stroke-linecap="round" opacity="0.75">
+        <!-- 留白飞鸟（纸墨档为墨色飞鸟） -->
+        <g class="birds" stroke-width="2.4" fill="none" stroke-linecap="round" opacity="0.75">
           <path d="M340 330 q10 -9 20 0 q10 -9 20 0" />
           <path d="M412 296 q8 -7 16 0 q8 -7 16 0" />
           <path d="M286 282 q7 -6 14 0 q7 -6 14 0" />
@@ -150,6 +162,18 @@ import { SITE, SECTIONS } from '../config';
 </div>
 
 <style>
+  /* 渐变止点：颜色由 global.css 的 --hero-* 变量按主题供给 */
+  .s-sky1 { stop-color: var(--hero-sky1); }
+  .s-sky2 { stop-color: var(--hero-sky2); }
+  .s-sky3 { stop-color: var(--hero-sky3); }
+  .s-sky4 { stop-color: var(--hero-sky4); }
+  .s-far { stop-color: var(--hero-far); }
+  .s-mid { stop-color: var(--hero-mid); }
+  .s-near { stop-color: var(--hero-near); }
+  .s-near2 { stop-color: var(--hero-near2); }
+  .pine { stroke: var(--hero-pine); }
+  .birds { stroke: var(--hero-bird); }
+
   .tw {
     animation: twinkle 3.2s ease-in-out infinite;
     animation-delay: var(--d, 0s);
