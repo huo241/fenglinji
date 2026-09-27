@@ -1,37 +1,18 @@
 {
   "name": "风林集",
   "motto": "其疾如风 · 其徐如林",
-  "footer": "© 2026 风林集",
+  "footer": "© 2026 风林集 · 其疾如风，其徐如林",
   "avatarText": "风",
   "avatarUrl": "https://avatars.githubusercontent.com/u/244631438?v=4",
   "ownerName": "风林集",
   "bio": "行于山水之间<br/>学在纸墨之上",
   "socials": {
-    "github": {
-      "url": "https://github.com/huo241",
-      "label": "GitHub"
-    },
-    "email": {
-      "url": "mailto:hcc5818@outlook.com",
-      "label": "邮箱"
-    },
-    "custom": [
-      {
-        "label": "ech0",
-        "url": "https://ech0.snappy.blog/"
-      }
-    ]
+    "github": { "url": "https://github.com/huo241", "label": "GitHub" },
+    "email": { "url": "", "label": "邮箱" },
+    "custom": []
   },
   "sections": [
-    {
-      "key": "essays",
-      "label": "随笔",
-      "tagline": "山中何事，松花酿酒，春水煎茶"
-    },
-    {
-      "key": "lectures",
-      "label": "讲义",
-      "tagline": "旧学商量加邃密，新知培养转深沉"
-    }
+    { "key": "essays", "label": "随笔", "tagline": "山中何事，松花酿酒，春水煎茶" },
+    { "key": "lectures", "label": "讲义", "tagline": "旧学商量加邃密，新知培养转深沉" }
   ]
 }

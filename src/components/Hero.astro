@@ -1,5 +1,5 @@
 ---
-// 首页横幅：原创 SVG 山景，三层视差 + 星星闪烁 + 云雾漂移
+// 首页横幅：原创水墨夜山 SVG，三层视差 + 星光闪烁 + 云气漂移
 import { SITE, SECTIONS } from '../config';
 ---
 
@@ -7,82 +7,127 @@ import { SITE, SECTIONS } from '../config';
   <div class="hero-art" aria-hidden="true">
     <svg viewBox="0 0 1440 640" preserveAspectRatio="xMidYMid slice">
       <defs>
+        <!-- 夜空：墨色，近地平线微亮 -->
         <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#101733" />
-          <stop offset="0.45" stop-color="#2a2a52" />
-          <stop offset="0.75" stop-color="#5b3d63" />
-          <stop offset="1" stop-color="#8a5468" />
+          <stop offset="0" stop-color="#0a0d12" />
+          <stop offset="0.5" stop-color="#121924" />
+          <stop offset="0.8" stop-color="#1c2938" />
+          <stop offset="1" stop-color="#29394b" />
         </linearGradient>
+        <!-- 月晕 -->
         <radialGradient id="moonGlow" cx="0.5" cy="0.5" r="0.5">
-          <stop offset="0" stop-color="#f6ecd8" stop-opacity="0.9" />
-          <stop offset="0.35" stop-color="#f6ecd8" stop-opacity="0.25" />
-          <stop offset="1" stop-color="#f6ecd8" stop-opacity="0" />
+          <stop offset="0" stop-color="#f0e9d6" stop-opacity="0.75" />
+          <stop offset="0.35" stop-color="#f0e9d6" stop-opacity="0.2" />
+          <stop offset="1" stop-color="#f0e9d6" stop-opacity="0" />
         </radialGradient>
-        <linearGradient id="haze" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#c99aa0" stop-opacity="0" />
-          <stop offset="1" stop-color="#c99aa0" stop-opacity="0.35" />
+        <!-- 山：淡墨渐入雾气 -->
+        <linearGradient id="inkFar" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#8ea4ba" stop-opacity="0.6" />
+          <stop offset="1" stop-color="#8ea4ba" stop-opacity="0.06" />
         </linearGradient>
+        <linearGradient id="inkMid" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#41546c" stop-opacity="0.95" />
+          <stop offset="1" stop-color="#41546c" stop-opacity="0.2" />
+        </linearGradient>
+        <linearGradient id="inkNear" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#1a2534" stop-opacity="1" />
+          <stop offset="1" stop-color="#0d141f" stop-opacity="1" />
+        </linearGradient>
+        <!-- 水墨晕染：让山脊线不再是机械折线 -->
+        <filter id="ink" x="-5%" y="-5%" width="110%" height="115%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="3" seed="7" stitchTiles="stitch" result="n" />
+          <feDisplacementMap in="SourceGraphic" in2="n" scale="20" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+        <filter id="mistBlur" x="-40%" y="-200%" width="180%" height="500%">
+          <feGaussianBlur stdDeviation="14" />
+        </filter>
+        <!-- 孤松 -->
+        <g id="pine" stroke="#0c1420" stroke-width="2.6" fill="none" stroke-linecap="round">
+          <path d="M0 0 L0 -30" />
+          <path d="M0 -9 L-11 -17 M0 -9 L11 -17" />
+          <path d="M0 -18 L-9 -26 M0 -18 L9 -26" />
+          <path d="M0 -25 L-6 -31 M0 -25 L6 -31" />
+        </g>
       </defs>
 
       <rect width="1440" height="640" fill="url(#sky)" />
 
-      <!-- 星星 -->
-      <g class="layer" data-depth="0.08" fill="#fff">
-        <circle cx="120" cy="90" r="1.6" class="tw" style="--d:0s" />
-        <circle cx="260" cy="150" r="1.1" class="tw" style="--d:.7s" />
-        <circle cx="380" cy="60" r="1.4" class="tw" style="--d:1.4s" />
-        <circle cx="520" cy="120" r="1" class="tw" style="--d:.3s" />
-        <circle cx="660" cy="45" r="1.5" class="tw" style="--d:1.9s" />
-        <circle cx="820" cy="95" r="1.2" class="tw" style="--d:1s" />
-        <circle cx="960" cy="55" r="1.7" class="tw" style="--d:.5s" />
-        <circle cx="1120" cy="130" r="1.1" class="tw" style="--d:2.2s" />
-        <circle cx="1260" cy="70" r="1.4" class="tw" style="--d:1.6s" />
-        <circle cx="1360" cy="150" r="1.2" class="tw" style="--d:.9s" />
-        <circle cx="180" cy="210" r="0.9" class="tw" style="--d:2.6s" />
-        <circle cx="1050" cy="180" r="0.9" class="tw" style="--d:1.2s" />
+      <!-- 星子，疏可走马 -->
+      <g class="layer" data-depth="0.08" fill="#dfe7f0">
+        <circle cx="120" cy="88" r="1.3" class="tw" style="--d:0s" />
+        <circle cx="262" cy="152" r="0.9" class="tw" style="--d:.7s" />
+        <circle cx="384" cy="58" r="1.2" class="tw" style="--d:1.4s" />
+        <circle cx="518" cy="118" r="0.8" class="tw" style="--d:.3s" />
+        <circle cx="662" cy="44" r="1.3" class="tw" style="--d:1.9s" />
+        <circle cx="824" cy="96" r="1" class="tw" style="--d:1s" />
+        <circle cx="958" cy="52" r="1.4" class="tw" style="--d:.5s" />
+        <circle cx="1122" cy="128" r="0.9" class="tw" style="--d:2.2s" />
+        <circle cx="1266" cy="70" r="1.2" class="tw" style="--d:1.6s" />
+        <circle cx="1362" cy="148" r="1" class="tw" style="--d:.9s" />
+        <circle cx="182" cy="206" r="0.7" class="tw" style="--d:2.6s" />
+        <circle cx="1052" cy="176" r="0.7" class="tw" style="--d:1.2s" />
       </g>
 
-      <!-- 月亮 -->
+      <!-- 月 -->
       <g class="layer" data-depth="0.15">
-        <circle cx="1160" cy="140" r="110" fill="url(#moonGlow)" />
-        <circle cx="1160" cy="140" r="42" fill="#f2e7cf" />
-        <circle cx="1146" cy="128" r="9" fill="#e2d4b8" opacity="0.7" />
-        <circle cx="1174" cy="152" r="6" fill="#e2d4b8" opacity="0.6" />
+        <circle cx="1150" cy="132" r="125" fill="url(#moonGlow)" />
+        <circle cx="1150" cy="132" r="40" fill="#ebe4d1" />
+        <circle cx="1137" cy="121" r="8" fill="#ddd3ba" opacity="0.65" />
+        <circle cx="1163" cy="143" r="5.5" fill="#ddd3ba" opacity="0.55" />
       </g>
 
-      <!-- 云雾 -->
-      <g class="clouds" opacity="0.5">
-        <ellipse cx="300" cy="240" rx="260" ry="26" fill="#c99aa0" opacity="0.14" class="drift" style="--t:46s" />
-        <ellipse cx="900" cy="200" rx="320" ry="22" fill="#c99aa0" opacity="0.12" class="drift" style="--t:62s" />
-        <ellipse cx="1240" cy="280" rx="240" ry="20" fill="#c99aa0" opacity="0.1" class="drift" style="--t:54s" />
+      <!-- 云气 -->
+      <g class="clouds">
+        <ellipse cx="300" cy="238" rx="270" ry="24" fill="#d8e2ec" opacity="0.07" class="drift" style="--t:46s" filter="url(#mistBlur)" />
+        <ellipse cx="880" cy="196" rx="330" ry="20" fill="#d8e2ec" opacity="0.06" class="drift" style="--t:62s" filter="url(#mistBlur)" />
+        <ellipse cx="1230" cy="276" rx="250" ry="18" fill="#d8e2ec" opacity="0.05" class="drift" style="--t:54s" filter="url(#mistBlur)" />
+        <!-- 一缕薄云掠过月面 -->
+        <ellipse cx="1080" cy="150" rx="190" ry="12" fill="#d8e2ec" opacity="0.1" class="drift" style="--t:70s" filter="url(#mistBlur)" />
       </g>
 
-      <!-- 远山 -->
+      <!-- 远山：淡墨 -->
       <g class="layer" data-depth="0.25">
-        <path d="M0 360 L140 300 L260 345 L420 265 L560 340 L700 290 L860 350 L1000 300 L1160 355 L1300 310 L1440 355 L1440 640 L0 640 Z"
-          fill="#4a3d68" opacity="0.85" />
-      </g>
-
-      <!-- 中山 -->
-      <g class="layer" data-depth="0.45">
-        <path d="M0 430 L120 380 L300 445 L480 350 L640 430 L820 365 L980 445 L1150 380 L1320 450 L1440 405 L1440 640 L0 640 Z"
-          fill="#332a4e" />
-        <path d="M480 350 L540 385 L510 390 L560 415 L480 430 Z" fill="#e8d9c8" opacity="0.12" />
-      </g>
-
-      <!-- 近山 + 飞鸟 -->
-      <g class="layer" data-depth="0.7">
-        <path d="M0 540 L180 470 L340 530 L520 455 L700 535 L900 480 L1080 550 L1260 495 L1440 545 L1440 640 L0 640 Z"
-          fill="#1f1a33" />
-        <g stroke="#0f0c1d" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.9">
-          <path d="M340 350 q10 -9 20 0 q10 -9 20 0" />
-          <path d="M410 315 q8 -7 16 0 q8 -7 16 0" />
-          <path d="M285 300 q7 -6 14 0 q7 -6 14 0" />
+        <g filter="url(#ink)">
+          <path d="M0 356 L150 296 L268 344 L430 262 L568 338 L706 288 L862 348 L1004 298 L1164 352 L1302 308 L1440 352 L1440 640 L0 640 Z"
+            fill="url(#inkFar)" />
         </g>
       </g>
 
-      <!-- 底部渐隐入背景 -->
-      <rect y="560" width="1440" height="80" fill="url(#haze)" opacity="0.25" />
+      <!-- 山脚雾带 -->
+      <ellipse cx="720" cy="400" rx="760" ry="30" fill="#d8e2ec" opacity="0.08" filter="url(#mistBlur)" />
+
+      <!-- 中山：次浓墨，脊上孤松 -->
+      <g class="layer" data-depth="0.45">
+        <g filter="url(#ink)">
+          <path d="M0 428 L128 378 L302 444 L478 348 L642 428 L818 362 L982 444 L1152 378 L1322 448 L1440 404 L1440 640 L0 640 Z"
+            fill="url(#inkMid)" />
+        </g>
+        <g opacity="0.9">
+          <use href="#pine" transform="translate(455,372) scale(0.9)" />
+          <use href="#pine" transform="translate(505,382) scale(1.05)" />
+          <use href="#pine" transform="translate(796,386) scale(0.85)" />
+          <use href="#pine" transform="translate(838,392) scale(1)" />
+          <use href="#pine" transform="translate(874,398) scale(0.75)" />
+        </g>
+      </g>
+
+      <!-- 中山与近山之间的夜雾 -->
+      <ellipse cx="480" cy="470" rx="540" ry="26" fill="#d8e2ec" opacity="0.07" filter="url(#mistBlur)" />
+      <ellipse cx="1120" cy="490" rx="480" ry="24" fill="#d8e2ec" opacity="0.06" filter="url(#mistBlur)" />
+
+      <!-- 近山：浓墨 -->
+      <g class="layer" data-depth="0.7">
+        <g filter="url(#ink)">
+          <path d="M0 540 L182 468 L342 528 L522 452 L702 534 L902 478 L1082 548 L1262 494 L1440 544 L1440 640 L0 640 Z"
+            fill="url(#inkNear)" />
+        </g>
+        <!-- 留白飞鸟 -->
+        <g stroke="#cfd9e4" stroke-width="2.4" fill="none" stroke-linecap="round" opacity="0.75">
+          <path d="M340 330 q10 -9 20 0 q10 -9 20 0" />
+          <path d="M412 296 q8 -7 16 0 q8 -7 16 0" />
+          <path d="M286 282 q7 -6 14 0 q7 -6 14 0" />
+        </g>
+      </g>
     </svg>
   </div>
 
