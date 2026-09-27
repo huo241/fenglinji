@@ -1,0 +1,6 @@
+# 后台页面永不缓存，保证修复即时生效（带哈希的静态资源由构建系统自带不可变缓存）
+/admin/*
+  Cache-Control: no-store
+
+/settings/*
+  Cache-Control: no-store
