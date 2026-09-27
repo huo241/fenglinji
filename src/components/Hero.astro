@@ -162,11 +162,12 @@ import { SITE, SECTIONS } from '../config';
 </div>
 
 <style>
-  /* 渐变止点：颜色由 global.css 的 --hero-* 变量按主题供给 */
-  .s-sky1 { stop-color: var(--hero-sky1); }
-  .s-sky2 { stop-color: var(--hero-sky2); }
-  .s-sky3 { stop-color: var(--hero-sky3); }
-  .s-sky4 { stop-color: var(--hero-sky4); }
+  /* 渐变止点：颜色与透明度由 global.css 的 --hero-* 变量按主题供给
+     纸墨档天空半透：背后的十六字行书水印隐隐透上来 */
+  .s-sky1 { stop-color: var(--hero-sky1); stop-opacity: var(--hero-sky1-o, 1); }
+  .s-sky2 { stop-color: var(--hero-sky2); stop-opacity: var(--hero-sky2-o, 1); }
+  .s-sky3 { stop-color: var(--hero-sky3); stop-opacity: var(--hero-sky3-o, 1); }
+  .s-sky4 { stop-color: var(--hero-sky4); stop-opacity: var(--hero-sky4-o, 1); }
   .s-far { stop-color: var(--hero-far); }
   .s-mid { stop-color: var(--hero-mid); }
   .s-near { stop-color: var(--hero-near); }

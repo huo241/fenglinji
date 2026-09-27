@@ -81,6 +81,11 @@
   --hero-pine: #2f2a20;
   --hero-bird: #3f392e;
   --hero-sun: #b04432;
+  /* 隔纸透字：天空半透，十六字水印与宣纸纹理从 hero 底下隐隐透上来 */
+  --hero-sky1-o: 0.8;
+  --hero-sky2-o: 0.76;
+  --hero-sky3-o: 0.72;
+  --hero-sky4-o: 0.85;
 }
 
 /* 宣纸纹理：几团极淡的陈年纸渍，静态 */
