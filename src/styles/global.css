@@ -275,6 +275,12 @@ img {
   letter-spacing: 2px;
 }
 
+.brand .brand-txt {
+  height: 22px;
+  width: auto;
+  display: block;
+}
+
 .brand .mark {
   width: 20px;
   height: 30px;
