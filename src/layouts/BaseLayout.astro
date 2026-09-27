@@ -13,7 +13,6 @@ const { title = SITE.name, description = `${SITE.motto} —— ${SITE.name}，�
 const navItems = [
   { href: '/', label: '首页' },
   ...SECTIONS.map((s) => ({ href: `/${s.key}/`, label: s.label })),
-  { href: '/about/', label: '关于' },
 ];
 
 const current = Astro.url.pathname;
