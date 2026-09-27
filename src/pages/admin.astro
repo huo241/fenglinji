@@ -329,6 +329,7 @@ import '../styles/admin.css';
       mde = new EasyMDE({
         element: $('editor') as HTMLTextAreaElement,
         spellChecker: false,
+        shortcuts: { toggleFullScreen: null, toggleSideBySide: null },
         sideBySideFullscreen: false,
         renderingConfig: { singleLineBreaks: false },
         placeholder: '从这里开始写……支持全部 Markdown 语法',
@@ -336,7 +337,7 @@ import '../styles/admin.css';
           'bold', 'italic', 'strikethrough', 'heading', '|',
           'quote', 'unordered-list', 'ordered-list', 'table', '|',
           'code', 'link', 'image', '|',
-          'preview', 'side-by-side', 'fullscreen', '|',
+          'preview', '|',
           'guide',
         ],
         imageUploadFunction(file: File, onSuccess: (url: string) => void, onError: (msg: string) => void) {          if (!token) return onError('先连接 GitHub');
