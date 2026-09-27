@@ -87,6 +87,7 @@ import '../styles/admin.css';
       </div>
 
       <button id="btn-new" class="btn primary block" type="button">＋ 写新文章</button>
+      <a href="/settings/" class="btn ghost block" style="text-align:center; text-decoration:none; margin-bottom:14px;">⚙ 站点设置（文案 / 社交链接）</a>
 
       <!-- 数据面板 -->
       <section class="stats-grid" id="stats-grid">
@@ -441,7 +442,11 @@ import '../styles/admin.css';
           $('post-count').textContent = `(${mds.length})`;
           postsCache = [];
           list.innerHTML = '';
-          for (const f of mds) {
+          // 目录列表接口不返回文件内容（content 为空），必须逐个拉取
+          const detailed: any[] = await Promise.all(
+            mds.map((f) => gh('GET', `src/content/blog/${f.name}`))
+          );
+          for (const f of detailed) {
             const raw = unb64(f.content);
             const { meta, body } = parseFrontmatter(raw);
             postsCache.push({ name: f.name, meta, words: body.replace(/\s/g, '').length });

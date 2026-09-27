@@ -74,6 +74,99 @@ img {
   padding: 0 24px;
 }
 
+/* ---------- 液态玻璃主题（Liquid Glass） ---------- */
+/* 思路：背景干净克制，玻璃近乎透明，质感全靠 blur/saturate + 高光边 + 投影 */
+:root[data-theme='glass'] {
+  color-scheme: light;
+  --bg: #eef1f5;
+  --bg-soft: rgba(255, 255, 255, 0.6);
+  --card: rgba(255, 255, 255, 0.55);
+  --text: #1d1f24;
+  --muted: #5f646e;
+  --border: rgba(255, 255, 255, 0.65);
+  --accent: #0a84ff;
+  --accent-soft: rgba(10, 132, 255, 0.12);
+  --shadow: 0 8px 32px rgba(56, 66, 88, 0.12);
+  --shadow-hover: 0 18px 48px rgba(56, 66, 88, 0.2);
+  --radius: 20px;
+  /* iOS 味道的关键：全套苹方，不用衬线 */
+  --sans: 'PingFang SC', 'PingFang TC', 'Helvetica Neue', sans-serif;
+  --serif: 'PingFang SC', 'PingFang TC', 'Helvetica Neue', sans-serif;
+}
+
+/* 壁纸：浅色晨雾渐变，静态，无光斑动画 */
+:root[data-theme='glass'] body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(80% 60% at 72% -12%, rgba(166, 194, 230, 0.5), transparent 68%),
+    radial-gradient(55% 45% at 6% 16%, rgba(193, 212, 235, 0.42), transparent 70%),
+    linear-gradient(176deg, #e3eaf2 0%, #f3f5f8 52%, #e9eef3 100%);
+}
+
+/* 玻璃卡片：clear glass——高透明 + 强模糊 + 白色高光顶边 */
+:root[data-theme='glass'] .post-card,
+:root[data-theme='glass'] .profile-card,
+:root[data-theme='glass'] .cats-card,
+:root[data-theme='glass'] .prose {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.64), rgba(255, 255, 255, 0.36));
+  backdrop-filter: blur(24px) saturate(1.8);
+  -webkit-backdrop-filter: blur(24px) saturate(1.8);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.25), var(--shadow);
+}
+
+:root[data-theme='glass'] .post-card:hover {
+  border-color: rgba(255, 255, 255, 0.95);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.25), var(--shadow-hover);
+}
+
+:root[data-theme='glass'] .site-nav {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(26px) saturate(1.8);
+  -webkit-backdrop-filter: blur(26px) saturate(1.8);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+:root[data-theme='glass'] .theme-toggle {
+  background: rgba(255, 255, 255, 0.55);
+  border-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+:root[data-theme='glass'] .cat-row .count {
+  background: rgba(255, 255, 255, 0.65);
+  color: var(--muted);
+}
+
+:root[data-theme='glass'] .avatar {
+  background: linear-gradient(135deg, #0a84ff, #5e5ce6);
+  box-shadow: 0 6px 20px rgba(10, 132, 255, 0.35);
+}
+
+:root[data-theme='glass'] .hero-section:hover {
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(12px) saturate(1.6);
+  -webkit-backdrop-filter: blur(12px) saturate(1.6);
+}
+
+/* 苹方最粗到 Semibold，伪加粗会发糊，玻璃主题标题统一 600 */
+:root[data-theme='glass'] .hero-title,
+:root[data-theme='glass'] .brand,
+:root[data-theme='glass'] .prose h1,
+:root[data-theme='glass'] .prose h2,
+:root[data-theme='glass'] .post-card h3,
+:root[data-theme='glass'] .section-head h2,
+:root[data-theme='glass'] .page-hero h1 {
+  font-weight: 600;
+}
+
 /* ---------- 滚动渐入动画 ---------- */
 .reveal {
   opacity: 0;
@@ -197,6 +290,10 @@ img {
 
 :root[data-theme='dark'] .icon-sun { display: none; }
 :root[data-theme='light'] .icon-moon { display: none; }
+:root[data-theme='glass'] .icon-moon { display: none; }
+:root[data-theme='glass'] .icon-sun { display: none; }
+:root[data-theme='light'] .icon-glass { display: none; }
+:root[data-theme='dark'] .icon-glass { display: none; }
 
 /* ---------- Hero ---------- */
 .hero {

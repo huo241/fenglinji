@@ -27,6 +27,8 @@ export interface SiteConfig {
   socials: {
     github: SocialLink;
     email: SocialLink;
+    /** 自定义社交链接，设置页里可随意增删 */
+    custom?: SocialLink[];
   };
   sections: SectionConfig[];
 }

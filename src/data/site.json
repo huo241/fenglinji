@@ -8,7 +8,8 @@
   "bio": "行于山水之间<br/>学在纸墨之上",
   "socials": {
     "github": { "url": "https://github.com/huo241", "label": "GitHub" },
-    "email": { "url": "", "label": "邮箱" }
+    "email": { "url": "", "label": "邮箱" },
+    "custom": []
   },
   "sections": [
     { "key": "essays", "label": "随笔", "tagline": "山中何事，松花酿酒，春水煎茶" },
