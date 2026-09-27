@@ -8,6 +8,12 @@ const lectureCount = posts.filter((p) => p.data.category === '讲义').length;
 
 const socialEntries = Object.values(SITE.socials).filter((s) => s?.url);
 const customSocials = SITE.socials.custom ?? [];
+// 邮箱填纯地址也行：自动补 mailto:
+const emailHref = SITE.socials.email.url
+  ? SITE.socials.email.url.startsWith('mailto:')
+    ? SITE.socials.email.url
+    : `mailto:${SITE.socials.email.url}`
+  : '';
 ---
 
 <aside class="sidebar">
@@ -27,7 +33,7 @@ const customSocials = SITE.socials.custom ?? [];
           </a>
         )}
         {SITE.socials.email.url && (
-          <a href={SITE.socials.email.url} aria-label={SITE.socials.email.label} title={SITE.socials.email.label}>
+          <a href={emailHref} aria-label={SITE.socials.email.label} title={SITE.socials.email.label}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
           </a>
         )}

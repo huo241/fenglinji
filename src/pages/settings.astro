@@ -267,7 +267,9 @@ import '../styles/global.css';
           json.bio = ($('f-bio') as HTMLTextAreaElement).value.trim().replace(/\n/g, '<br/>');
           json.socials = json.socials || {};
           json.socials.github = { ...(json.socials.github || {}), url: ($('f-github') as HTMLInputElement).value.trim() };
-          json.socials.email = { ...(json.socials.email || {}), url: ($('f-email') as HTMLInputElement).value.trim() };
+          const emailRaw = ($('f-email') as HTMLInputElement).value.trim();
+          const emailNorm = emailRaw && !emailRaw.startsWith('mailto:') && !emailRaw.startsWith('http') ? 'mailto:' + emailRaw : emailRaw;
+          json.socials.email = { ...(json.socials.email || {}), url: emailNorm };
           json.socials.custom = Array.from(document.querySelectorAll('#custom-list .social-edit-row'))
             .map((row) => ({
               label: (row.querySelector('.se-label') as HTMLInputElement).value.trim(),
