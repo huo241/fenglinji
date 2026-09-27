@@ -324,10 +324,11 @@ import '../styles/admin.css';
       });
 
       // ---------- 编辑器 ----------
+      // 注意：不开 autosave——固定钥匙的本地草稿会在每次打开时复活旧内容，
+      // 盖掉用户新粘的文案。文章本体都在 GitHub，写作台只做「当前编辑窗口」。
       mde = new EasyMDE({
         element: $('editor') as HTMLTextAreaElement,
         spellChecker: false,
-        autosave: { enabled: true, uniqueId: 'flj-draft', delay: 800, timeFormat: { format: 'HH:mm', locale: 'zh-CN' } } as any,
         sideBySideFullscreen: false,
         renderingConfig: { singleLineBreaks: false },
         placeholder: '从这里开始写……支持全部 Markdown 语法',
@@ -338,8 +339,7 @@ import '../styles/admin.css';
           'preview', 'side-by-side', 'fullscreen', '|',
           'guide',
         ],
-        imageUploadFunction(file: File, onSuccess: (url: string) => void, onError: (msg: string) => void) {
-          if (!token) return onError('先连接 GitHub');
+        imageUploadFunction(file: File, onSuccess: (url: string) => void, onError: (msg: string) => void) {          if (!token) return onError('先连接 GitHub');
           const ext = file.name.split('.').pop();
           const path = `public/images/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
           const reader = new FileReader();
@@ -358,6 +358,11 @@ import '../styles/admin.css';
           reader.readAsDataURL(file);
         },
       });
+      // 一次性清掉旧版 autosave 残留的本地草稿（EasyMDE 的键名是 __meteor_key__ + uniqueId）
+      try {
+        localStorage.removeItem('__meteor_key__flj-draft');
+        localStorage.removeItem('flj-draft');
+      } catch {}
       mde.codemirror.on('change', updateWordCount);
 
       function updateWordCount() {
