@@ -40,7 +40,7 @@ import '../styles/gate.css';
     </div>
     <script is:inline>
       (function () {
-        var HASH = '8371a0e643887f66a5ff0a9272a3128a2080ccb3b8bbbfe296205ec351a017b8';
+        var HASH = 'b330864da6dda7d75a0fda4514327edb1fe643420499ea66c6e5cb7a0508b496';
         async function sha(s) {
           var d = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
           return Array.from(new Uint8Array(d)).map(function (b) { return b.toString(16).padStart(2, '0'); }).join('');
