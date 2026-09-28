@@ -4,3 +4,9 @@
 
 /settings/*
   Cache-Control: no-store
+
+# giscus 主题 CSS：允许 giscus.app 跨域加载（评论区换肤）
+/giscus-ink.css
+  Access-Control-Allow-Origin: https://giscus.app
+/giscus-night.css
+  Access-Control-Allow-Origin: https://giscus.app
