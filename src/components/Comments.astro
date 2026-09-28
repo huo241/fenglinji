@@ -1,0 +1,89 @@
+---
+// 风林集 · 文章评论区（giscus / GitHub Discussions）
+// - 评论数据存仓库 Discussions（Announcements 分类，仅维护者可开新讨论）
+// - 画布透明，跟随深色/纸墨两档主题换肤；玻璃开关由外层容器样式承接
+---
+
+<section class="comments" id="comments" aria-label="文章评论">
+  <h2 class="comments-title">评论</h2>
+  <div class="comments-body" id="giscus-mount"></div>
+</section>
+
+<script>
+  // giscus 嵌入：手动建 script，处理 ClientRouter 转场后重挂载
+  const GISCUS_ORIGIN = 'https://giscus.app';
+  const INK = 'https://snappy.blog/giscus-ink.css';
+  const NIGHT = 'https://snappy.blog/giscus-night.css';
+
+  function currentGiscusTheme(): string {
+    const t = document.documentElement.dataset.theme;
+    return t === 'paper' ? INK : NIGHT;
+  }
+
+  function postTheme() {
+    const iframe = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame');
+    if (!iframe?.contentWindow) return;
+    iframe.contentWindow.postMessage(
+      { giscus: { setConfig: { theme: currentGiscusTheme() } } },
+      GISCUS_ORIGIN
+    );
+  }
+
+  function mountGiscus() {
+    const host = document.getElementById('giscus-mount');
+    if (!host || host.querySelector('iframe.giscus-frame')) return;
+    host.innerHTML = '';
+
+    const s = document.createElement('script');
+    s.src = 'https://giscus.app/client.js';
+    s.async = true;
+    s.crossOrigin = 'anonymous';
+    s.setAttribute('data-repo', 'huo241/fenglinji');
+    s.setAttribute('data-repo-id', 'R_kgDOUkUoaQ');
+    s.setAttribute('data-category', 'Announcements');
+    s.setAttribute('data-category-id', 'DIC_kwDOUkUoac4DGk4o');
+    s.setAttribute('data-mapping', 'pathname');
+    s.setAttribute('data-strict', '0');
+    s.setAttribute('data-reactions-enabled', '1');
+    s.setAttribute('data-emit-metadata', '0');
+    s.setAttribute('data-input-position', 'top');
+    s.setAttribute('data-theme', currentGiscusTheme());
+    s.setAttribute('data-lang', 'zh-CN');
+    s.setAttribute('data-loading', 'lazy');
+    host.appendChild(s);
+  }
+
+  // 首载与转场后都重挂载（astro:page-load 两者都会触发）
+  document.addEventListener('astro:page-load', () => {
+    if (document.getElementById('giscus-mount')) mountGiscus();
+  });
+
+  // 主题 / 玻璃切换时同步给 iframe
+  const mo = new MutationObserver(() => {
+    if (document.querySelector('iframe.giscus-frame')) postTheme();
+  });
+  mo.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-theme', 'data-glass'],
+  });
+</script>
+
+<style>
+  .comments {
+    margin-top: 40px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+  }
+  .comments-title {
+    font-size: 1.15rem;
+    margin: 0 0 18px;
+    color: var(--muted);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  /* giscus iframe 全宽，不受 prose 段落排版影响 */
+  .comments-body :global(iframe) {
+    width: 100% !important;
+    max-width: 100%;
+  }
+</style>

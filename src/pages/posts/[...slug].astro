@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Comments from '../../components/Comments.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -25,6 +26,7 @@ const fmt = (d: Date) =>
         {tags.map((t) => <span class="tag">{t}</span>)}
       </div>
       <Content />
+      <Comments />
       <a href="/" class="back-link">← 回到首页</a>
     </article>
   </main>
