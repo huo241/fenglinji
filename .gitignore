@@ -4,6 +4,7 @@ node_modules/
 # 构建产物
 dist/
 .astro/
+.wrangler/
 
 # 系统与编辑器
 .DS_Store

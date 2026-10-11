@@ -159,9 +159,14 @@ import '../styles/gate.css';
       const $ = (id: string) => document.getElementById(id)!;
       const TOKEN_KEY = 'flj_gh_token';
       const REPO_KEY = 'flj_repo';
+      // 提交身份固定为 GitHub 的 noreply 地址，避免把账号主邮箱写进公开仓库历史
+      const COMMIT_IDENTITY = {
+        name: 'huo241',
+        email: '244631438+huo241@users.noreply.github.com',
+      };
 
       let token = localStorage.getItem(TOKEN_KEY) || '';
-      let repo = localStorage.getItem(REPO_KEY) || 'huo241/fenglinji';
+      let repo = localStorage.getItem(REPO_KEY) || '';
       let siteJson: any = null;
       let fileSha = '';
 
@@ -180,6 +185,10 @@ import '../styles/gate.css';
       }
 
       async function gh(method: string, path: string, body?: any) {
+        // 凡是带 message 的请求都是「产生提交」，统一改写提交身份
+        if (body && typeof body.message === 'string') {
+          body = { ...body, author: COMMIT_IDENTITY, committer: COMMIT_IDENTITY };
+        }
         const ctrl = new AbortController();
         const timer = setTimeout(() => ctrl.abort(), 20000);
         let res: Response;

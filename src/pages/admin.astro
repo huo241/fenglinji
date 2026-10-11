@@ -157,7 +157,7 @@ import '../styles/admin.css';
       <section class="conn-sec">
         <h3>连接设置</h3>
         <input id="drawer-token" type="password" placeholder="github_pat_ 令牌" autocomplete="off" />
-        <input id="drawer-repo" type="text" placeholder="仓库" value="huo241/fenglinji" />
+        <input id="drawer-repo" type="text" placeholder="仓库，如 owner/repo" autocomplete="off" />
         <button id="btn-reconnect" class="btn ghost block" type="button">保存并重连</button>
       </section>
     </aside>
@@ -191,9 +191,15 @@ import '../styles/admin.css';
       const $ = (id: string) => document.getElementById(id)!;
       const OWNER_REPO_KEY = 'flj_repo';
       const TOKEN_KEY = 'flj_gh_token';
+      // 提交身份固定为 GitHub 的 noreply 地址。
+      // 不指定的话，GitHub 会用账号主邮箱给提交记账，等于把真实邮箱写进公开仓库历史。
+      const COMMIT_IDENTITY = {
+        name: 'huo241',
+        email: '244631438+huo241@users.noreply.github.com',
+      };
 
       let token = localStorage.getItem(TOKEN_KEY) || '';
-      let repo = localStorage.getItem(OWNER_REPO_KEY) || 'huo241/fenglinji';
+      let repo = localStorage.getItem(OWNER_REPO_KEY) || '';
       let editingFile: { name: string; sha: string } | null = null;
       let mde: any = null;
       let postsCache: { name: string; meta: any; words: number }[] = [];
@@ -215,6 +221,10 @@ import '../styles/admin.css';
       }
 
       async function gh(method: string, path: string, body?: any) {
+        // 凡是带 message 的请求都是「产生提交」，统一改写提交身份
+        if (body && typeof body.message === 'string') {
+          body = { ...body, author: COMMIT_IDENTITY, committer: COMMIT_IDENTITY };
+        }
         const ctrl = new AbortController();
         const timer = setTimeout(() => ctrl.abort(), 20000);
         let res: Response;
@@ -318,7 +328,7 @@ import '../styles/admin.css';
       $('btn-reconnect').addEventListener('click', () => {
         // 抽屉里的值显式传入连接函数（弹窗里已无仓库输入框，不能回写）
         const dt = ($('drawer-token') as HTMLInputElement).value.trim();
-        const dr = ($('drawer-repo') as HTMLInputElement).value.trim() || 'huo241/fenglinji';
+        const dr = ($('drawer-repo') as HTMLInputElement).value.trim();
         tryConnect(dt, dr).then(() => setDrawer(false));
       });
 

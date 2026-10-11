@@ -1,5 +1,5 @@
 # Pages CMS 后台配置 —— https://pagescms.org
-# 打开 pagescms.org → 用 GitHub 登录 huo241 → 选这个仓库，就能在网页上改以下内容。
+# 打开 pagescms.org → 用你的 GitHub 账号登录 → 选这个仓库，就能在网页上改以下内容。
 
 media:
   input: public/images
