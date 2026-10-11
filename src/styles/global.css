@@ -1014,6 +1014,31 @@ img {
   color: #f43f5e;
 }
 
+/* 页脚 RSS 订阅入口 */
+.site-footer .footer-rss {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: 12px;
+  padding: 3px 11px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  vertical-align: middle;
+  transition: color 0.25s ease, border-color 0.25s ease;
+}
+.site-footer .footer-rss svg {
+  width: 13px;
+  height: 13px;
+}
+.site-footer .footer-rss:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
 /* ---------- 移动端 ---------- */
 @media (max-width: 640px) {
   .nav-links a {

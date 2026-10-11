@@ -6,9 +6,21 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   description?: string;
+  /** 分享卡片图，留空用默认 /og.png；可传站内相对路径或完整外链 */
+  image?: string;
+  /** og:type，文章页传 article */
+  type?: 'website' | 'article';
+  /** 文章页传入发布时间，用于 og:article 与 JSON-LD */
+  publishedAt?: Date;
 }
 
-const { title = SITE.name, description = `${SITE.motto} —— ${SITE.name}，随笔与讲义的私人园地` } = Astro.props;
+const {
+  title = SITE.name,
+  description = `${SITE.motto} —— ${SITE.name}，随笔与讲义的私人园地`,
+  image = '/og.png',
+  type = 'website',
+  publishedAt,
+} = Astro.props;
 
 const navItems = [
   { href: '/', label: '首页' },
@@ -18,6 +30,38 @@ const navItems = [
 const current = Astro.url.pathname;
 const isActive = (href: string) =>
   href === '/' ? current === '/' : current.startsWith(href);
+
+// ---- SEO：绝对 URL 基准取自 astro.config 的 site，兜底写死正式域名 ----
+const ORIGIN = Astro.site ?? new URL('https://snappy.blog');
+const canonical = new URL(Astro.url.pathname, ORIGIN).href;
+const ogImage = new URL(image, ORIGIN).href;
+const rssHref = new URL('/rss.xml', ORIGIN).href;
+const fullTitle = title === SITE.name ? title : `${title} · ${SITE.name}`;
+
+const jsonLd =
+  type === 'article' && publishedAt
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: title,
+        description,
+        image: ogImage,
+        datePublished: publishedAt.toISOString(),
+        inLanguage: 'zh-CN',
+        mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
+        author: { '@type': 'Person', name: SITE.ownerName },
+        publisher: { '@type': 'Organization', name: SITE.name },
+      }
+    : {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: SITE.name,
+        alternateName: SITE.motto,
+        description,
+        url: `${ORIGIN.origin}/`,
+        inLanguage: 'zh-CN',
+        author: { '@type': 'Person', name: SITE.ownerName },
+      };
 ---
 
 <!doctype html>
@@ -26,10 +70,33 @@ const isActive = (href: string) =>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <!-- 分享卡片（微信 / X / 飞书 等） -->
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={SITE.name} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    {publishedAt && <meta property="article:published_time" content={publishedAt.toISOString()} />}
+
+    <!-- 订阅 -->
+    <link rel="alternate" type="application/rss+xml" title={`${SITE.name} · RSS`} href={rssHref} />
+
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>{title}</title>
+    <title>{fullTitle}</title>
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     <ClientRouter />
     <script is:inline>
       // 首屏防闪烁：只保留深色与纸墨两档；旧访客存的 light 归入纸墨
@@ -86,6 +153,14 @@ const isActive = (href: string) =>
     <footer class="site-footer">
       <div class="container">
         {SITE.footer}
+        <a class="footer-rss" href="/rss.xml" title="RSS 订阅" aria-label="RSS 订阅">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <circle cx="6" cy="18" r="1.8" fill="currentColor" stroke="none" />
+            <path d="M5 11a8 8 0 0 1 8 8" />
+            <path d="M5 4a15 15 0 0 1 15 15" />
+          </svg>
+          RSS
+        </a>
       </div>
     </footer>
 

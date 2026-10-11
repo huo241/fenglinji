@@ -16,7 +16,7 @@ const fmt = (d: Date) =>
   `${d.getFullYear()} 年 ${d.getMonth() + 1} 月 ${d.getDate()} 日`;
 ---
 
-<BaseLayout title={`${title} · 风林集`} description={description}>
+<BaseLayout title={title} description={description} type="article" publishedAt={date}>
   <main class="container">
     <article class="prose" style="margin-top:48px;">
       <h1 transition:name={`post-title-${post.id}`}>{title}</h1>
