@@ -105,7 +105,6 @@ const jsonLd =
         if (t === 'light') t = 'paper';
         if (t !== 'dark' && t !== 'paper') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'paper';
         document.documentElement.dataset.theme = t;
-        document.documentElement.dataset.glass = localStorage.getItem('glass') === 'on' ? 'on' : 'off';
       })();
     </script>
   </head>
@@ -134,12 +133,6 @@ const jsonLd =
               <path d="M17 17H6.5A2.5 2.5 0 0 0 4 19.5" opacity="0.7" />
             </svg>
           </button>
-          <button id="glass-toggle" class="theme-toggle glass-toggle" aria-label="开关液态玻璃" title="液态玻璃 Liquid Glass">
-            <svg class="icon-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 3.5c3.2 4 6 7.4 6 10.5a6 6 0 1 1-12 0c0-3.1 2.8-6.5 6-10.5z" />
-              <path d="M9.5 14a2.6 2.6 0 0 0 2 2.6" stroke-width="1.6" opacity="0.7" />
-            </svg>
-          </button>
         </div>
       </div>
     </nav>
@@ -165,14 +158,10 @@ const jsonLd =
     </footer>
 
     <script>
-      // ---- 主题切换（深/纸两档）与液态玻璃开关，互相独立，事件委托页面转场后依然生效 ----
+      // ---- 主题切换（深/纸两档），事件委托页面转场后依然生效 ----
       function applyTheme(t: string) {
         document.documentElement.dataset.theme = t;
         localStorage.setItem('theme', t);
-      }
-      function applyGlass(on: boolean) {
-        document.documentElement.dataset.glass = on ? 'on' : 'off';
-        localStorage.setItem('glass', on ? 'on' : 'off');
       }
       document.addEventListener('click', (e) => {
         const el = e.target as HTMLElement;
@@ -180,14 +169,11 @@ const jsonLd =
           const order = ['dark', 'paper'];
           const cur = document.documentElement.dataset.theme || 'dark';
           applyTheme(order[(order.indexOf(cur) + 1) % order.length] || 'paper');
-        } else if (el.closest('#glass-toggle')) {
-          applyGlass(document.documentElement.dataset.glass !== 'on');
         }
       });
       document.addEventListener('astro:after-swap', () => {
         const saved = localStorage.getItem('theme');
         applyTheme(saved === 'dark' || saved === 'paper' ? saved : (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'paper'));
-        applyGlass(localStorage.getItem('glass') === 'on');
       });
 
       // ---- 滚动渐入（astro:page-load 首载与转场后都会触发）----

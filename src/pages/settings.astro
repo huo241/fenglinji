@@ -23,7 +23,6 @@ import '../styles/gate.css';
         var t = localStorage.getItem('theme');
         if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
         document.documentElement.dataset.theme = t;
-        document.documentElement.dataset.glass = localStorage.getItem('glass') === 'on' ? 'on' : 'off';
       })();
     </script>
   </head>
@@ -87,7 +86,7 @@ import '../styles/gate.css';
       </div>
 
       <!-- 未连接提示 -->
-      <div id="setup-card" class="glass-card setup-card hidden">
+      <div id="setup-card" class="panel setup-card hidden">
         <h2>先连接 GitHub</h2>
         <p id="setup-hint">令牌按域名分别保存：正式域名上写作台连过的，这里能直接复用；<b>本地预览</b>（localhost）里读不到，需要粘一枚。</p>
         <div class="row" style="margin-bottom:12px;">
@@ -109,7 +108,7 @@ import '../styles/gate.css';
 
       <!-- 设置表单 -->
       <form id="settings-form" class="hidden" onsubmit="return false">
-        <section class="glass-card">
+        <section class="panel">
           <h2>基本信息</h2>
           <div class="grid2">
             <label>站名<input id="f-name" type="text" /></label>
@@ -118,7 +117,7 @@ import '../styles/gate.css';
           <label>页脚文字<input id="f-footer" type="text" /></label>
         </section>
 
-        <section class="glass-card">
+        <section class="panel">
           <h2>侧栏个人卡片</h2>
           <div class="grid2">
             <label>显示的名字<input id="f-owner" type="text" /></label>
@@ -128,7 +127,7 @@ import '../styles/gate.css';
           <label>个人简介（想换行就写 &lt;br/&gt;）<textarea id="f-bio" rows="2"></textarea></label>
         </section>
 
-        <section class="glass-card">
+        <section class="panel">
           <h2>社交链接</h2>
           <div class="grid2">
             <label>GitHub 主页地址<input id="f-github" type="url" placeholder="留空则不显示" /></label>
@@ -139,7 +138,7 @@ import '../styles/gate.css';
           <button id="btn-add-social" class="btn ghost" type="button">＋ 添加一个链接</button>
         </section>
 
-        <section class="glass-card">
+        <section class="panel">
           <h2>板块文案</h2>
           <p class="hint warn">板块名字同时决定文章归类，改了名字后，旧文章的「分类」也要在写作台里同步改，否则文章会从板块里消失。不想动就只改副标题。</p>
           <div id="section-list"></div>
@@ -382,7 +381,7 @@ import '../styles/gate.css';
     font-size: 14px;
     margin: 0 0 28px;
   }
-  .glass-card {
+  .panel {
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -390,20 +389,20 @@ import '../styles/gate.css';
     padding: 26px 28px;
     margin-bottom: 22px;
   }
-  .glass-card h2 {
+  .panel h2 {
     font-family: var(--serif);
     font-size: 18px;
     letter-spacing: 2px;
     margin: 0 0 18px;
   }
-  .glass-card label {
+  .panel label {
     display: block;
     font-size: 13.5px;
     color: var(--muted);
     margin-bottom: 14px;
   }
-  .glass-card input,
-  .glass-card textarea {
+  .panel input,
+  .panel textarea {
     display: block;
     width: 100%;
     box-sizing: border-box;
@@ -418,8 +417,8 @@ import '../styles/gate.css';
     outline: none;
     transition: border-color 0.2s ease;
   }
-  .glass-card input:focus,
-  .glass-card textarea:focus {
+  .panel input:focus,
+  .panel textarea:focus {
     border-color: var(--accent);
   }
   .grid2 {
